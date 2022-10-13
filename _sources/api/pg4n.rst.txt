@@ -1,0 +1,77 @@
+pg4n package
+============
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pg4n.test
+
+Submodules
+----------
+
+pg4n.main module
+----------------
+
+.. automodule:: pg4n.main
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.orderby module
+-------------------
+
+.. automodule:: pg4n.orderby
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.psqlparser module
+----------------------
+
+.. automodule:: pg4n.psqlparser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.psqlwrapper module
+-----------------------
+
+.. automodule:: pg4n.psqlwrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.qepparser module
+---------------------
+
+.. automodule:: pg4n.qepparser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.sqlparser module
+---------------------
+
+.. automodule:: pg4n.sqlparser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.util module
+----------------
+
+.. automodule:: pg4n.util
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pg4n
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pg4n &mdash; PostgreSQL for novices  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> PostgreSQL for novices
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../program-architecture.html">Program architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pg4n.html">pg4n package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PostgreSQL for novices</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>pg4n</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pg4n">
+<h1>pg4n<a class="headerlink" href="#pg4n" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pg4n.html">pg4n package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.test.html">pg4n.test package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.test.html#module-pg4n.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#module-pg4n.main">pg4n.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#module-pg4n.orderby">pg4n.orderby module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.orderby.has_subquery_order_by"><code class="docutils literal notranslate"><span class="pre">has_subquery_order_by()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.orderby.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#module-pg4n.psqlparser">pg4n.psqlparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser"><code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.control_codes"><code class="docutils literal notranslate"><span class="pre">PsqlParser.control_codes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.debug"><code class="docutils literal notranslate"><span class="pre">PsqlParser.debug</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.fout"><code class="docutils literal notranslate"><span class="pre">PsqlParser.fout</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.match_error"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.match_prompt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_prompt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.match_sql_stmt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_sql_stmt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.match_sql_stmt_end"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_sql_stmt_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.match_sql_stmt_start"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_sql_stmt_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.parse_first_found_stmt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.parse_first_found_stmt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.parse_for_new_prompt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.parse_for_new_prompt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.parse_sql_stmt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.parse_sql_stmt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.prompt_chars"><code class="docutils literal notranslate"><span class="pre">PsqlParser.prompt_chars</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.stmt_chars"><code class="docutils literal notranslate"><span class="pre">PsqlParser.stmt_chars</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.stmt_end"><code class="docutils literal notranslate"><span class="pre">PsqlParser.stmt_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.tok_prompt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.tok_prompt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.tok_prompt_linebreak"><code class="docutils literal notranslate"><span class="pre">PsqlParser.tok_prompt_linebreak</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlparser.PsqlParser.tok_stmt_end"><code class="docutils literal notranslate"><span class="pre">PsqlParser.tok_stmt_end</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#module-pg4n.psqlwrapper">pg4n.psqlwrapper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.analyze"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.analyze</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.check_and_act_on_repl_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.db_name"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.db_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.debug"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.debug</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.fout"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.fout</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.ifilter"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.ifilter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.input_log"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.input_log</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.ofilter"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.ofilter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.output_log"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.output_log</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.parser"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.parser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.psqlwrapper.PsqlWrapper.replace_prompt"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.replace_prompt()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#module-pg4n.qepparser">pg4n.qepparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPAnalysis"><code class="docutils literal notranslate"><span class="pre">QEPAnalysis</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPAnalysis.plan"><code class="docutils literal notranslate"><span class="pre">QEPAnalysis.plan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPAnalysis.qep"><code class="docutils literal notranslate"><span class="pre">QEPAnalysis.qep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPAnalysis.root"><code class="docutils literal notranslate"><span class="pre">QEPAnalysis.root</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPNode"><code class="docutils literal notranslate"><span class="pre">QEPNode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPNode.find"><code class="docutils literal notranslate"><span class="pre">QEPNode.find()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPNode.plan"><code class="docutils literal notranslate"><span class="pre">QEPNode.plan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPNode.plans"><code class="docutils literal notranslate"><span class="pre">QEPNode.plans</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPParser"><code class="docutils literal notranslate"><span class="pre">QEPParser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pg4n.html#pg4n.qepparser.QEPParser.parse"><code class="docutils literal notranslate"><span class="pre">QEPParser.parse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.qepparser.node"><code class="docutils literal notranslate"><span class="pre">node</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.qepparser.qep"><code class="docutils literal notranslate"><span class="pre">qep</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#module-pg4n.sqlparser">pg4n.sqlparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.sqlparser.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.html#pg4n.sqlparser.parse"><code class="docutils literal notranslate"><span class="pre">parse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#module-pg4n.util">pg4n.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#module-pg4n">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Heikkilä et al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

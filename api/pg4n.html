@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pg4n package &mdash; PostgreSQL for novices  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pg4n.test package" href="pg4n.test.html" />
+    <link rel="prev" title="Program architecture" href="../program-architecture.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> PostgreSQL for novices
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../program-architecture.html">Program architecture</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pg4n package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pg4n.test.html">pg4n.test package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.main">pg4n.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.orderby">pg4n.orderby module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.orderby.has_subquery_order_by"><code class="docutils literal notranslate"><span class="pre">has_subquery_order_by()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.orderby.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.psqlparser">pg4n.psqlparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser"><code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.control_codes"><code class="docutils literal notranslate"><span class="pre">PsqlParser.control_codes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.debug"><code class="docutils literal notranslate"><span class="pre">PsqlParser.debug</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.fout"><code class="docutils literal notranslate"><span class="pre">PsqlParser.fout</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.match_error"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.match_prompt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_prompt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.match_sql_stmt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_sql_stmt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.match_sql_stmt_end"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_sql_stmt_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.match_sql_stmt_start"><code class="docutils literal notranslate"><span class="pre">PsqlParser.match_sql_stmt_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.parse_first_found_stmt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.parse_first_found_stmt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.parse_for_new_prompt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.parse_for_new_prompt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.parse_sql_stmt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.parse_sql_stmt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.prompt_chars"><code class="docutils literal notranslate"><span class="pre">PsqlParser.prompt_chars</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.stmt_chars"><code class="docutils literal notranslate"><span class="pre">PsqlParser.stmt_chars</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.stmt_end"><code class="docutils literal notranslate"><span class="pre">PsqlParser.stmt_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.tok_prompt"><code class="docutils literal notranslate"><span class="pre">PsqlParser.tok_prompt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.tok_prompt_linebreak"><code class="docutils literal notranslate"><span class="pre">PsqlParser.tok_prompt_linebreak</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser.tok_stmt_end"><code class="docutils literal notranslate"><span class="pre">PsqlParser.tok_stmt_end</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.psqlwrapper">pg4n.psqlwrapper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.analyze"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.analyze</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.check_and_act_on_repl_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.db_name"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.db_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.debug"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.debug</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.fout"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.fout</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.ifilter"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.ifilter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.input_log"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.input_log</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.ofilter"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.ofilter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.output_log"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.output_log</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.parser"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.parser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.psqlwrapper.PsqlWrapper.replace_prompt"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper.replace_prompt()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.qepparser">pg4n.qepparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.QEPAnalysis"><code class="docutils literal notranslate"><span class="pre">QEPAnalysis</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPAnalysis.plan"><code class="docutils literal notranslate"><span class="pre">QEPAnalysis.plan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPAnalysis.qep"><code class="docutils literal notranslate"><span class="pre">QEPAnalysis.qep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPAnalysis.root"><code class="docutils literal notranslate"><span class="pre">QEPAnalysis.root</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.QEPNode"><code class="docutils literal notranslate"><span class="pre">QEPNode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPNode.find"><code class="docutils literal notranslate"><span class="pre">QEPNode.find()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPNode.plan"><code class="docutils literal notranslate"><span class="pre">QEPNode.plan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPNode.plans"><code class="docutils literal notranslate"><span class="pre">QEPNode.plans</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.QEPParser"><code class="docutils literal notranslate"><span class="pre">QEPParser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPParser.parse"><code class="docutils literal notranslate"><span class="pre">QEPParser.parse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.node"><code class="docutils literal notranslate"><span class="pre">node</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.qep"><code class="docutils literal notranslate"><span class="pre">qep</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.sqlparser">pg4n.sqlparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.sqlparser.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.sqlparser.parse"><code class="docutils literal notranslate"><span class="pre">parse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.util">pg4n.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PostgreSQL for novices</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>pg4n package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/pg4n.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pg4n-package">
+<h1>pg4n package<a class="headerlink" href="#pg4n-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pg4n.test.html">pg4n.test package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.test.html#module-pg4n.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-pg4n.main">
+<span id="pg4n-main-module"></span><h2>pg4n.main module<a class="headerlink" href="#module-pg4n.main" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pg4n.main.main">
+<span class="sig-prename descclassname"><span class="pre">pg4n.main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/main.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.main.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pg4n.orderby">
+<span id="pg4n-orderby-module"></span><h2>pg4n.orderby module<a class="headerlink" href="#module-pg4n.orderby" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pg4n.orderby.has_subquery_order_by">
+<span class="sig-prename descclassname"><span class="pre">pg4n.orderby.</span></span><span class="sig-name descname"><span class="pre">has_subquery_order_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/orderby.html#has_subquery_order_by"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.orderby.has_subquery_order_by" title="Permalink to this definition"></a></dt>
+<dd><p>Does not use the qep so far.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pg4n.orderby.main">
+<span class="sig-prename descclassname"><span class="pre">pg4n.orderby.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/orderby.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.orderby.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pg4n.psqlparser">
+<span id="pg4n-psqlparser-module"></span><h2>pg4n.psqlparser module<a class="headerlink" href="#module-pg4n.psqlparser" title="Permalink to this heading"></a></h2>
+<p>Parse psql output.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.psqlparser.</span></span><span class="sig-name descname"><span class="pre">PsqlParser</span></span><a class="reference internal" href="../_modules/pg4n/psqlparser.html#PsqlParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlparser.PsqlParser" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parses psql output for syntactic analysis.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.control_codes">
+<span class="sig-name descname"><span class="pre">control_codes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b\x08'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.control_codes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.debug">
+<span class="sig-name descname"><span class="pre">debug</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.debug" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.fout">
+<span class="sig-name descname"><span class="pre">fout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TextIO</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.fout" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_error">
+<span class="sig-name descname"><span class="pre">match_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ERROR:'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_error" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_prompt">
+<span class="sig-name descname"><span class="pre">match_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{W:(0-9A-Z_a-zªµ·...)</span> <span class="pre">{'=&gt;'</span> <span class="pre">|</span> <span class="pre">'=#'}}}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_prompt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_sql_stmt">
+<span class="sig-name descname"><span class="pre">match_sql_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">W:(-</span> <span class="pre">-:&lt;-~)</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_sql_stmt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_sql_stmt_end">
+<span class="sig-name descname"><span class="pre">match_sql_stmt_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(;)</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_sql_stmt_end" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_sql_stmt_start">
+<span class="sig-name descname"><span class="pre">match_sql_stmt_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SELECT</span> <span class="pre">'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_sql_stmt_start" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_first_found_stmt">
+<span class="sig-name descname"><span class="pre">parse_first_found_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlparser.html#PsqlParser.parse_first_found_stmt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_first_found_stmt" title="Permalink to this definition"></a></dt>
+<dd><p>Parse for the content between two prompts. Returns an empty         list if there is no statement or there was an error.</p>
+<p>Expected to be deprecated when detecting multiple statements is
+implemented.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_for_new_prompt">
+<span class="sig-name descname"><span class="pre">parse_for_new_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlparser.html#PsqlParser.parse_for_new_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_for_new_prompt" title="Permalink to this definition"></a></dt>
+<dd><p>Parse for an empty prompt, usually to detect when a query         evaluation has ended.</p>
+<p>Returns an empty list if none found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_sql_stmt">
+<span class="sig-name descname"><span class="pre">parse_sql_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{{{W:(0-9A-Z_a-zªµ·...)</span> <span class="pre">{'=&gt;'</span> <span class="pre">|</span> <span class="pre">'=#'}}}</span> <span class="pre">W:(-</span> <span class="pre">-:&lt;-~)}</span> <span class="pre">(;)}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_sql_stmt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.prompt_chars">
+<span class="sig-name descname"><span class="pre">prompt_chars</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyzªµ·ºÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.prompt_chars" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.stmt_chars">
+<span class="sig-name descname"><span class="pre">stmt_chars</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!&quot;#$%&amp;\'()*+,-./:&lt;=&gt;?&#64;[\\]^_`{|}~</span> <span class="pre">\t\n\r\x0b\x0c\x1b\x08'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.stmt_chars" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.stmt_end">
+<span class="sig-name descname"><span class="pre">stmt_end</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">';'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.stmt_end" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.tok_prompt">
+<span class="sig-name descname"><span class="pre">tok_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{W:(0-9A-Z_a-zªµ·...)</span> <span class="pre">{'=&gt;'</span> <span class="pre">|</span> <span class="pre">'=#'}}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.tok_prompt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.tok_prompt_linebreak">
+<span class="sig-name descname"><span class="pre">tok_prompt_linebreak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'-&gt;'</span> <span class="pre">|</span> <span class="pre">'-#'}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.tok_prompt_linebreak" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.tok_stmt_end">
+<span class="sig-name descname"><span class="pre">tok_stmt_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(;)</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.tok_stmt_end" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pg4n.psqlwrapper">
+<span id="pg4n-psqlwrapper-module"></span><h2>pg4n.psqlwrapper module<a class="headerlink" href="#module-pg4n.psqlwrapper" title="Permalink to this heading"></a></h2>
+<p>Interface with psql and capture all input and output.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.psqlwrapper.</span></span><span class="sig-name descname"><span class="pre">PsqlWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_name_parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Handles terminal interfacing with psql, using the parameter parser     to pick up relevant SQL statements for the hook function.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.analyze">
+<span class="sig-name descname"><span class="pre">analyze</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.analyze" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output">
+<span class="sig-name descname"><span class="pre">check_and_act_on_repl_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latest_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psql_log</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.check_and_act_on_repl_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output" title="Permalink to this definition"></a></dt>
+<dd><p>Detect if psql has run a statement and is asking for         a new statement (“=&gt; ” prompt).</p>
+<p>Entering a statement will always lead to a new prompt, so now         the output_log will be examined if an interesting statement was run,         and if it was run successfully. If so, add a fitting message in         before the new prompt.
+psql_log is only needed for analysis.
+latest_output is what’s being changed and returned in new form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.db_name">
+<span class="sig-name descname"><span class="pre">db_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bytes</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b''</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.db_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.debug">
+<span class="sig-name descname"><span class="pre">debug</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.debug" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.fout">
+<span class="sig-name descname"><span class="pre">fout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TextIO</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.fout" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.ifilter">
+<span class="sig-name descname"><span class="pre">ifilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.ifilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.ifilter" title="Permalink to this definition"></a></dt>
+<dd><p>User input filter function for pexpect.interact: not used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.input_log">
+<span class="sig-name descname"><span class="pre">input_log</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bytes</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b''</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.input_log" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.ofilter">
+<span class="sig-name descname"><span class="pre">ofilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.ofilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.ofilter" title="Permalink to this definition"></a></dt>
+<dd><p>Forward output to check_and_act_on_repl_output() and flush         output log if substitute output is returned and replace output         with it accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.output_log">
+<span class="sig-name descname"><span class="pre">output_log</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bytes</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b''</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.output_log" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.parser">
+<span class="sig-name descname"><span class="pre">parser</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pg4n.psqlparser.PsqlParser" title="pg4n.psqlparser.PsqlParser"><span class="pre">PsqlParser</span></a></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.parser" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.replace_prompt">
+<span class="sig-name descname"><span class="pre">replace_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_prompt_msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.replace_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.replace_prompt" title="Permalink to this definition"></a></dt>
+<dd><p>Fit the new message in the right place,         just on the previous line before new prompt.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pg4n.qepparser">
+<span id="pg4n-qepparser-module"></span><h2>pg4n.qepparser module<a class="headerlink" href="#module-pg4n.qepparser" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPAnalysis">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.qepparser.</span></span><span class="sig-name descname"><span class="pre">QEPAnalysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qep_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPAnalysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPAnalysis" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents the result of EXPLAIN ANALYZE.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPAnalysis.plan">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plan</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Plan</span></em><a class="headerlink" href="#pg4n.qepparser.QEPAnalysis.plan" title="Permalink to this definition"></a></dt>
+<dd><p>A dict of the root node’s properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPAnalysis.qep">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">qep</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">QEP</span></em><a class="headerlink" href="#pg4n.qepparser.QEPAnalysis.qep" title="Permalink to this definition"></a></dt>
+<dd><p>A dict of the query execution plan’s properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">QEP</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPAnalysis.root">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pg4n.qepparser.QEPNode" title="pg4n.qepparser.QEPNode"><span class="pre">QEPNode</span></a></em><a class="headerlink" href="#pg4n.qepparser.QEPAnalysis.root" title="Permalink to this definition"></a></dt>
+<dd><p>The root node of the query execution plan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pg4n.qepparser.QEPNode" title="pg4n.qepparser.QEPNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QEPNode</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.qepparser.</span></span><span class="sig-name descname"><span class="pre">QEPNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPNode" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A node in a query execution plan.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPNode.find">
+<span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPNode.find"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPNode.find" title="Permalink to this definition"></a></dt>
+<dd><p>Find nodes matching the predicate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPNode.plan">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plan</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Plan</span></em><a class="headerlink" href="#pg4n.qepparser.QEPNode.plan" title="Permalink to this definition"></a></dt>
+<dd><p>A dict of the node’s properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPNode.plans">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plans</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">pg4n.qepparser.Plan</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pg4n.qepparser.QEPNode.plans" title="Permalink to this definition"></a></dt>
+<dd><p>A list of the node’s children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.qepparser.</span></span><span class="sig-name descname"><span class="pre">QEPParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPParser" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Performs analyses on given queries, returning resultant QEPAnalysis.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPParser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stmt</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPParser.parse" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for __call__</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pg4n.qepparser.QEPAnalysis" title="pg4n.qepparser.QEPAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">QEPAnalysis</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.qepparser.node">
+<span class="sig-prename descclassname"><span class="pre">pg4n.qepparser.</span></span><span class="sig-name descname"><span class="pre">node</span></span><a class="headerlink" href="#pg4n.qepparser.node" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.qepparser.qep">
+<span class="sig-prename descclassname"><span class="pre">pg4n.qepparser.</span></span><span class="sig-name descname"><span class="pre">qep</span></span><a class="headerlink" href="#pg4n.qepparser.qep" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">QEP</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-pg4n.sqlparser">
+<span id="pg4n-sqlparser-module"></span><h2>pg4n.sqlparser module<a class="headerlink" href="#module-pg4n.sqlparser" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pg4n.sqlparser.main">
+<span class="sig-prename descclassname"><span class="pre">pg4n.sqlparser.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pg4n.sqlparser.parse">
+<span class="sig-prename descclassname"><span class="pre">pg4n.sqlparser.</span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.parse" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pg4n.util">
+<span id="pg4n-util-module"></span><h2>pg4n.util module<a class="headerlink" href="#module-pg4n.util" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-pg4n">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pg4n" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../program-architecture.html" class="btn btn-neutral float-left" title="Program architecture" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pg4n.test.html" class="btn btn-neutral float-right" title="pg4n.test package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Heikkilä et al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
