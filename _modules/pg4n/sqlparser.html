@@ -70,15 +70,37 @@
              
   <h1>Source code for pg4n.sqlparser</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
 <span class="kn">import</span> <span class="nn">sqlglot</span>
+<span class="kn">import</span> <span class="nn">sqlglot.expressions</span> <span class="k">as</span> <span class="nn">exp</span>
 <span class="kn">from</span> <span class="nn">sqlglot.dialects.postgres</span> <span class="kn">import</span> <span class="n">Postgres</span>
+<span class="kn">import</span> <span class="nn">psycopg</span>
+
+
+<div class="viewcode-block" id="PostgreSQLDataType"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.PostgreSQLDataType">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">PostgreSQLDataType</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">digits</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">precision</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Column"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.Column">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Column</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">PostgreSQLDataType</span>
+    <span class="n">table</span><span class="p">:</span> <span class="nb">str</span></div>
+
 
 <div class="viewcode-block" id="SqlParser"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.SqlParser">[docs]</a><span class="k">class</span> <span class="nc">SqlParser</span><span class="p">:</span>
     <span class="c1"># Patches the postgres dialect to recognize bpchar</span>
     <span class="n">Postgres</span><span class="o">.</span><span class="n">Tokenizer</span><span class="o">.</span><span class="n">KEYWORDS</span><span class="p">[</span><span class="s2">&quot;BPCHAR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqlglot</span><span class="o">.</span><span class="n">TokenType</span><span class="o">.</span><span class="n">CHAR</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dialect</span> <span class="o">=</span> <span class="s2">&quot;postgres&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_connection</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dialect</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;postgres&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="p">:</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">Connection</span> <span class="o">=</span> <span class="n">db_connection</span>
 
 <div class="viewcode-block" id="SqlParser.parse"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.SqlParser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlglot</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -99,7 +121,222 @@
 <span class="sd">        Throws sqlglot.ParseError on invalid sql.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">sqlglot</span><span class="o">.</span><span class="n">parse_one</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">read</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dialect</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">sqlglot</span><span class="o">.</span><span class="n">parse_one</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">read</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dialect</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SqlParser.get_root_node"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.SqlParser.get_root_node">[docs]</a>    <span class="k">def</span> <span class="nf">get_root_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the root node (probably exp.Select) from node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">root_node</span> <span class="o">=</span> <span class="n">node</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">new_root</span> <span class="o">=</span> <span class="n">root_node</span><span class="o">.</span><span class="n">find_ancestor</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">root_node</span> <span class="o">=</span> <span class="n">new_root</span>
+        <span class="k">return</span> <span class="n">root_node</span></div>
+
+<div class="viewcode-block" id="SqlParser.find_all_table_names"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.SqlParser.find_all_table_names">[docs]</a>    <span class="k">def</span> <span class="nf">find_all_table_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds all unique table names in &#39;parsed_sql&#39;.</span>
+<span class="sd">        Any table name with an alias is listed without the alias</span>
+<span class="sd">        (e.g.: FROM &lt;table&gt; AS &lt;alias&gt;)</span>
+<span class="sd">        Also removes duplicate table names from the result.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tables</span> <span class="o">=</span> <span class="n">parsed_sql</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Table</span><span class="p">)</span>
+        <span class="c1"># table.this.this: first .this gets the exp.Identifier of the table and</span>
+        <span class="c1"># second .this gets the name of the identifier.</span>
+        <span class="n">table_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">this</span><span class="o">.</span><span class="n">this</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">]</span>
+
+        <span class="n">unique_table_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">table_names</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">unique_table_names</span></div>
+
+<div class="viewcode-block" id="SqlParser.get_query_columns"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.SqlParser.get_query_columns">[docs]</a>    <span class="k">def</span> <span class="nf">get_query_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Column</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets all columns from all tables mentioned in parsed_sql.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_root_node</span><span class="p">(</span><span class="n">parsed_sql</span><span class="p">)</span>
+        <span class="n">table_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_all_table_names</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">table_names</span><span class="p">:</span>
+            <span class="n">table_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+            <span class="n">columns</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">table_columns</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">columns</span></div>
+
+<div class="viewcode-block" id="SqlParser.get_column_name_from_column_expression"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.SqlParser.get_column_name_from_column_expression">[docs]</a>    <span class="k">def</span> <span class="nf">get_column_name_from_column_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_expression</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the column name of column expression ast node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">column_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">column_expression</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Identifier</span><span class="p">)</span><span class="o">.</span><span class="n">this</span></div>
+
+<div class="viewcode-block" id="SqlParser.find_where_predicates"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.SqlParser.find_where_predicates">[docs]</a>    <span class="k">def</span> <span class="nf">find_where_predicates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">exp</span><span class="o">.</span><span class="n">Predicate</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds all Predicate nodes inside Where statements from some root node</span>
+<span class="sd">        (usually the whole parsed output from sqlparser.parse_one()).</span>
+<span class="sd">        This function takes care to not introduce any duplicate Predicate&#39;s in case of</span>
+<span class="sd">        nested Where statements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">predicates</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">where_statements</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Where</span><span class="p">)</span>
+
+        <span class="n">toplevel_where_statements</span> <span class="o">=</span> \
+            <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">find_ancestor</span><span class="p">(</span>
+                <span class="n">exp</span><span class="o">.</span><span class="n">Where</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span><span class="p">,</span> <span class="n">where_statements</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">where_statement</span> <span class="ow">in</span> <span class="n">toplevel_where_statements</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">predicate</span> <span class="ow">in</span> <span class="n">where_statement</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Predicate</span><span class="p">):</span>
+                <span class="n">predicates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predicate</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">predicates</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Column</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the columns from db &#39;db_name&#39; table &#39;table_name&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_column_names</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_column_types</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">)</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+            <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">types</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">table_name</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">columns</span>
+
+    <span class="k">def</span> <span class="nf">_get_column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Requires that  &#39;table_name&#39; exists.</span>
+<span class="sd">        Extracts columns of the table by running postgres specific metadata query.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">statement</span> <span class="o">=</span>  \
+            <span class="s2">&quot;SELECT column_name &quot;</span> \
+            <span class="s2">&quot;FROM information_schema.columns &quot;</span> \
+            <span class="sa">f</span><span class="s2">&quot;WHERE table_name = &#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39;;&quot;</span>
+
+        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+
+        <span class="c1"># transforms 1-element tuples to just list of elements</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;column_names: </span><span class="si">{</span><span class="n">column_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">column_names</span>
+
+    <span class="k">def</span> <span class="nf">_get_column_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> \
+            <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PostgreSQLDataType</span><span class="p">]:</span>
+        <span class="c1"># sql adapted from: https://stackoverflow.com/a/20194807/13540518</span>
+        <span class="n">column_type_statement_prefix</span> <span class="o">=</span> \
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT</span>
+<span class="s2">    pg_catalog.format_type(a.atttypid, a.atttypmod) AS &quot;data_type&quot;</span>
+<span class="s2">FROM</span>
+<span class="s2">    pg_catalog.pg_attribute AS a</span>
+<span class="s2">WHERE</span>
+<span class="s2">    a.attnum &gt; 0</span>
+<span class="s2">    AND NOT a.attisdropped</span>
+<span class="s2">    AND a.attrelid = (</span>
+<span class="s2">        SELECT c.oid</span>
+<span class="s2">            FROM pg_catalog.pg_class c</span>
+<span class="s2">            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace</span>
+<span class="s2">            WHERE c.relname = &#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39;</span>
+<span class="s2">                AND pg_catalog.pg_table_is_visible(c.oid)</span>
+<span class="s2">                AND a.attname IN (&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">in_condition</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">in_condition</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
+        <span class="n">in_condition</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;)</span><span class="se">\n</span><span class="s2">    );&quot;</span>
+        <span class="n">column_type_statement</span> <span class="o">=</span> <span class="n">column_type_statement_prefix</span> <span class="o">+</span> <span class="n">in_condition</span>
+
+        <span class="n">type_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">column_type_statement</span><span class="p">)</span>
+            <span class="n">type_names</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+
+        <span class="c1"># transforms 1-element tuples to just list of elements</span>
+        <span class="n">type_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">type_names</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;type_names: </span><span class="si">{</span><span class="n">type_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">parseable_type_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from_internal_types</span><span class="p">(</span><span class="n">type_names</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">parseable_type_names</span>
+
+    <span class="k">def</span> <span class="nf">_convert_from_internal_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PostgreSQLDataType</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Postgresql has internal type names such as: character or character(x).</span>
+<span class="sd">        sqlglot can only parse the types in the form they are declared (atleast in</span>
+<span class="sd">        column definitions inside CREATE TABLE) like: CHAR or CHAR(x).</span>
+<span class="sd">        This function converts from the internal to the declared form.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">converted_types</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">character_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(?:character|char)\(\s*(\d+)\s*\)$&#39;</span><span class="p">)</span>
+        <span class="n">varchar_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s1">&#39;^(?:(?:character varying)|varchar)\(\s*(\d+)\s*\)$&#39;</span><span class="p">)</span>
+        <span class="n">numeric_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s1">&#39;^(?:numeric|decimal)\s*\(\s*(\d+)(?:\s*,\s*(\d+))?\s*\)$&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">type_name</span> <span class="ow">in</span> <span class="n">type_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;integer&quot;</span><span class="p">:</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;INT&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;character&quot;</span><span class="p">:</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;CHAR&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;CHAR&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">character_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CHAR(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                                                          <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">varchar_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;VARCHAR(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                                                          <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">numeric_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">num_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">num_groups</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NUMERIC(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                                                              <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">num_groups</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NUMERIC(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                                           <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># TODO: proper error handling</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;unrecognized number &#39;</span><span class="si">{</span><span class="n">num_groups</span><span class="si">}</span><span class="s2">&#39; of arguments for numeric() column type&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># TODO: proper error handling</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unable to convert from internal type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39; to declared type&quot;</span><span class="p">,</span>
+                      <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">converted_types</span>
+
+    <span class="k">def</span> <span class="nf">_run_sql_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
 </pre></div>
 
            </div>

@@ -121,7 +121,24 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pg4n.sqlparser">pg4n.sqlparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.sqlparser.Column"><code class="docutils literal notranslate"><span class="pre">Column</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.Column.name"><code class="docutils literal notranslate"><span class="pre">Column.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.Column.table"><code class="docutils literal notranslate"><span class="pre">Column.table</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.Column.type"><code class="docutils literal notranslate"><span class="pre">Column.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.sqlparser.PostgreSQLDataType"><code class="docutils literal notranslate"><span class="pre">PostgreSQLDataType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.PostgreSQLDataType.digits"><code class="docutils literal notranslate"><span class="pre">PostgreSQLDataType.digits</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.PostgreSQLDataType.name"><code class="docutils literal notranslate"><span class="pre">PostgreSQLDataType.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.PostgreSQLDataType.precision"><code class="docutils literal notranslate"><span class="pre">PostgreSQLDataType.precision</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.sqlparser.SqlParser"><code class="docutils literal notranslate"><span class="pre">SqlParser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.SqlParser.find_all_table_names"><code class="docutils literal notranslate"><span class="pre">SqlParser.find_all_table_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.SqlParser.find_where_predicates"><code class="docutils literal notranslate"><span class="pre">SqlParser.find_where_predicates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.SqlParser.get_column_name_from_column_expression"><code class="docutils literal notranslate"><span class="pre">SqlParser.get_column_name_from_column_expression()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.SqlParser.get_query_columns"><code class="docutils literal notranslate"><span class="pre">SqlParser.get_query_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.SqlParser.get_root_node"><code class="docutils literal notranslate"><span class="pre">SqlParser.get_root_node()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.SqlParser.parse"><code class="docutils literal notranslate"><span class="pre">SqlParser.parse()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pg4n.sqlparser.SqlParser.parse_one"><code class="docutils literal notranslate"><span class="pre">SqlParser.parse_one()</span></code></a></li>
 </ul>
@@ -516,9 +533,112 @@ latest_output is what’s being changed and returned in new form.</p>
 <section id="module-pg4n.sqlparser">
 <span id="pg4n-sqlparser-module"></span><h2>pg4n.sqlparser module<a class="headerlink" href="#module-pg4n.sqlparser" title="Permalink to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="pg4n.sqlparser.SqlParser">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.sqlparser.</span></span><span class="sig-name descname"><span class="pre">SqlParser</span></span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#SqlParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.SqlParser" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pg4n.sqlparser.Column">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.sqlparser.</span></span><span class="sig-name descname"><span class="pre">Column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#Column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.Column" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.sqlparser.Column.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pg4n.sqlparser.Column.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.sqlparser.Column.table">
+<span class="sig-name descname"><span class="pre">table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pg4n.sqlparser.Column.table" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.sqlparser.Column.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pg4n.sqlparser.PostgreSQLDataType" title="pg4n.sqlparser.PostgreSQLDataType"><span class="pre">PostgreSQLDataType</span></a></em><a class="headerlink" href="#pg4n.sqlparser.Column.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.sqlparser.PostgreSQLDataType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.sqlparser.</span></span><span class="sig-name descname"><span class="pre">PostgreSQLDataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#PostgreSQLDataType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.PostgreSQLDataType" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.sqlparser.PostgreSQLDataType.digits">
+<span class="sig-name descname"><span class="pre">digits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pg4n.sqlparser.PostgreSQLDataType.digits" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.sqlparser.PostgreSQLDataType.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pg4n.sqlparser.PostgreSQLDataType.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.sqlparser.PostgreSQLDataType.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pg4n.sqlparser.PostgreSQLDataType.precision" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.sqlparser.SqlParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.sqlparser.</span></span><span class="sig-name descname"><span class="pre">SqlParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_connection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#SqlParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.SqlParser" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.sqlparser.SqlParser.find_all_table_names">
+<span class="sig-name descname"><span class="pre">find_all_table_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_sql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#SqlParser.find_all_table_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.SqlParser.find_all_table_names" title="Permalink to this definition"></a></dt>
+<dd><p>Finds all unique table names in ‘parsed_sql’.
+Any table name with an alias is listed without the alias
+(e.g.: FROM &lt;table&gt; AS &lt;alias&gt;)
+Also removes duplicate table names from the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.sqlparser.SqlParser.find_where_predicates">
+<span class="sig-name descname"><span class="pre">find_where_predicates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#SqlParser.find_where_predicates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.SqlParser.find_where_predicates" title="Permalink to this definition"></a></dt>
+<dd><p>Finds all Predicate nodes inside Where statements from some root node
+(usually the whole parsed output from sqlparser.parse_one()).
+This function takes care to not introduce any duplicate Predicate’s in case of
+nested Where statements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Predicate</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.sqlparser.SqlParser.get_column_name_from_column_expression">
+<span class="sig-name descname"><span class="pre">get_column_name_from_column_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_expression</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#SqlParser.get_column_name_from_column_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.SqlParser.get_column_name_from_column_expression" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the column name of column expression ast node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.sqlparser.SqlParser.get_query_columns">
+<span class="sig-name descname"><span class="pre">get_query_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_sql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#SqlParser.get_query_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.SqlParser.get_query_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Gets all columns from all tables mentioned in parsed_sql.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="#pg4n.sqlparser.Column" title="pg4n.sqlparser.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">Column</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.sqlparser.SqlParser.get_root_node">
+<span class="sig-name descname"><span class="pre">get_root_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#SqlParser.get_root_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.SqlParser.get_root_node" title="Permalink to this definition"></a></dt>
+<dd><p>Finds the root node (probably exp.Select) from node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pg4n.sqlparser.SqlParser.parse">
 <span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/sqlparser.html#SqlParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.sqlparser.SqlParser.parse" title="Permalink to this definition"></a></dt>

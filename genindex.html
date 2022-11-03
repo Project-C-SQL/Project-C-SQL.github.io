@@ -75,6 +75,7 @@
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -102,6 +103,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.Column">Column (class in pg4n.sqlparser)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.control_codes">control_codes (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
   </ul></td>
@@ -112,14 +115,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.db_name">db_name (pg4n.psqlwrapper.PsqlWrapper attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.debug">debug (pg4n.psqlparser.PsqlParser attribute)</a>
 
       <ul>
         <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.debug">(pg4n.psqlwrapper.PsqlWrapper attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.PostgreSQLDataType.digits">digits (pg4n.sqlparser.PostgreSQLDataType attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -128,14 +133,32 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.qepparser.QEPNode.find">find() (pg4n.qepparser.QEPNode method)</a>
 </li>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.SqlParser.find_all_table_names">find_all_table_names() (pg4n.sqlparser.SqlParser method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.SqlParser.find_where_predicates">find_where_predicates() (pg4n.sqlparser.SqlParser method)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.fout">fout (pg4n.psqlparser.PsqlParser attribute)</a>
 
       <ul>
         <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.fout">(pg4n.psqlwrapper.PsqlWrapper attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.SqlParser.get_column_name_from_column_expression">get_column_name_from_column_expression() (pg4n.sqlparser.SqlParser method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.SqlParser.get_query_columns">get_query_columns() (pg4n.sqlparser.SqlParser method)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.SqlParser.get_root_node">get_root_node() (pg4n.sqlparser.SqlParser method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -207,6 +230,14 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.Column.name">name (pg4n.sqlparser.Column attribute)</a>
+
+      <ul>
+        <li><a href="api/pg4n.html#pg4n.sqlparser.PostgreSQLDataType.name">(pg4n.sqlparser.PostgreSQLDataType attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.qepparser.node">node (in module pg4n.qepparser)</a>
 </li>
   </ul></td>
@@ -271,8 +302,6 @@
         <li><a href="api/pg4n.html#module-pg4n.psqlparser">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pg4n.psqlwrapper
 
@@ -280,6 +309,8 @@
         <li><a href="api/pg4n.html#module-pg4n.psqlwrapper">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pg4n.qepparser
 
@@ -315,6 +346,10 @@
 </li>
       </ul></li>
       <li><a href="api/pg4n.html#pg4n.qepparser.QEPNode.plans">plans (pg4n.qepparser.QEPNode property)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.PostgreSQLDataType">PostgreSQLDataType (class in pg4n.sqlparser)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.PostgreSQLDataType.precision">precision (pg4n.sqlparser.PostgreSQLDataType attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.prompt_chars">prompt_chars (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
@@ -374,6 +409,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.Column.table">table (pg4n.sqlparser.Column attribute)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_prompt">tok_prompt (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
   </ul></td>
@@ -381,6 +418,8 @@
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_prompt_linebreak">tok_prompt_linebreak (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_stmt_end">tok_stmt_end (pg4n.psqlparser.PsqlParser attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.Column.type">type (pg4n.sqlparser.Column attribute)</a>
 </li>
   </ul></td>
 </tr></table>
