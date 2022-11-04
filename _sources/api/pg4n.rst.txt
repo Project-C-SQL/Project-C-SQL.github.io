@@ -12,6 +12,14 @@ Subpackages
 Submodules
 ----------
 
+pg4n.cmp\_domain\_checker module
+--------------------------------
+
+.. automodule:: pg4n.cmp_domain_checker
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pg4n.main module
 ----------------
 
