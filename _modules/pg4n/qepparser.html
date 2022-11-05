@@ -69,7 +69,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pg4n.qepparser</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypedDict</span>
 <span class="kn">import</span> <span class="nn">psycopg</span>
 <span class="kn">from</span> <span class="nn">psycopg</span> <span class="kn">import</span> <span class="n">Connection</span>
 
@@ -114,18 +115,26 @@
     <span class="sd">&quot;&quot;&quot;A node in a query execution plan.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_</span><span class="p">:</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new QEPNode.</span>
+
+<span class="sd">        :param node_: the node to wrap&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node</span> <span class="o">=</span> <span class="n">node_</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="s2">&quot;QEPNode&quot;</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Iterate over child nodes.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="n">QEPNode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node</span><span class="p">[</span><span class="s2">&quot;Plans&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="n">QEPNode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Plans&quot;</span><span class="p">,</span> <span class="p">[]))</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get the number of child nodes.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node</span><span class="p">[</span><span class="s2">&quot;Plans&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QEPNode&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the child node at the given index.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the child node at the given index.</span>
+
+<span class="sd">        :param key: the index of the child node to get</span>
+
+<span class="sd">        :returns: the child node at the given index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">QEPNode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_node</span><span class="p">[</span><span class="s2">&quot;Plans&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -142,11 +151,53 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">plans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;A list of the node&#39;s children.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node</span><span class="p">[</span><span class="s2">&quot;Plans&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Plans&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
-<div class="viewcode-block" id="QEPNode.find"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.qepparser.QEPNode.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">node</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Find nodes matching the predicate.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node</span><span class="p">[</span><span class="s2">&quot;Plans&quot;</span><span class="p">]))</span></div></div>
+<div class="viewcode-block" id="QEPNode.find"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.qepparser.QEPNode.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pr</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">node</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span>
+             <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Finds nodes matching the predicate.</span>
+
+<span class="sd">        :param pr: a function that takes a node and returns True if it matches</span>
+<span class="sd">        :param recursive: if True, search recursively, otherwise only search</span>
+<span class="sd">            this+children</span>
+
+<span class="sd">        :returns: a list of matching nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span> <span class="o">+</span> \
+                <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="n">chain</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_node</span><span class="p">,),</span> <span class="bp">self</span><span class="o">.</span><span class="n">plans</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="QEPNode.rfind"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.qepparser.QEPNode.rfind">[docs]</a>    <span class="k">def</span> <span class="nf">rfind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">node</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Finds nodes matching the predicate, recursively.</span>
+
+<span class="sd">        :param pred: a function that takes a node and returns True if it matches</span>
+
+<span class="sd">        :returns: a list of matching nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QEPNode.findval"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.qepparser.QEPNode.findval">[docs]</a>    <span class="k">def</span> <span class="nf">findval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Finds nodes with the given key and value.</span>
+
+<span class="sd">        :param key: the key to search for</span>
+<span class="sd">        :param val: the value to search for</span>
+<span class="sd">        :param recursive: if True, search recursively, otherwise only search</span>
+<span class="sd">            this+children</span>
+
+<span class="sd">        :returns: a list of matching nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="n">val</span><span class="p">,</span> <span class="n">recursive</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QEPNode.rfindval"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.qepparser.QEPNode.rfindval">[docs]</a>    <span class="k">def</span> <span class="nf">rfindval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Finds nodes with the given key and value, recursively.</span>
+
+<span class="sd">        :param key: the key to search for</span>
+<span class="sd">        :param val: the value to search for</span>
+
+<span class="sd">        :returns: a list of matching nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">findval</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="QEPAnalysis"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.qepparser.QEPAnalysis">[docs]</a><span class="k">class</span> <span class="nc">QEPAnalysis</span><span class="p">:</span>
@@ -181,8 +232,12 @@
     <span class="sd">&quot;&quot;&quot;Performs analyses on given queries, returning resultant QEPAnalysis.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ref</span> <span class="o">=</span> <span class="ow">not</span> <span class="ow">not</span> <span class="n">conn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ref</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="p">:</span> <span class="n">Connection</span> <span class="o">=</span> <span class="n">conn</span> <span class="ow">or</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># use constraint_exclusion to avoid unnecessary index scans</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;set constraint_exclusion = on;&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref</span><span class="p">:</span>
@@ -200,7 +255,8 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            A dictionary representing the query execution plan.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">stmt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;explain (format json, analyze, verbose) </span><span class="si">{</span><span class="n">stmt</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">;&quot;</span>
+        <span class="n">stmt</span> <span class="o">=</span> <span class="s2">&quot;explain (format json, analyze, verbose)&quot;</span> <span class="o">+</span> \
+            <span class="n">stmt</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
             <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>

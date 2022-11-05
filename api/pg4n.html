@@ -121,8 +121,11 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.QEPNode"><code class="docutils literal notranslate"><span class="pre">QEPNode</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPNode.find"><code class="docutils literal notranslate"><span class="pre">QEPNode.find()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPNode.findval"><code class="docutils literal notranslate"><span class="pre">QEPNode.findval()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPNode.plan"><code class="docutils literal notranslate"><span class="pre">QEPNode.plan</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPNode.plans"><code class="docutils literal notranslate"><span class="pre">QEPNode.plans</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPNode.rfind"><code class="docutils literal notranslate"><span class="pre">QEPNode.rfind()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pg4n.qepparser.QEPNode.rfindval"><code class="docutils literal notranslate"><span class="pre">QEPNode.rfindval()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.QEPParser"><code class="docutils literal notranslate"><span class="pre">QEPParser</span></code></a><ul>
@@ -522,11 +525,37 @@ latest_output is what’s being changed and returned in new form.</p>
 <p>A node in a query execution plan.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pg4n.qepparser.QEPNode.find">
-<span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPNode.find"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPNode.find" title="Permalink to this definition"></a></dt>
-<dd><p>Find nodes matching the predicate.</p>
+<span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPNode.find"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPNode.find" title="Permalink to this definition"></a></dt>
+<dd><p>Finds nodes matching the predicate.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>]</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]) – a function that takes a node and returns True if it matches</p></li>
+<li><p><strong>recursive</strong> – if True, search recursively, otherwise only search
+this+children</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>] – a list of matching nodes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPNode.findval">
+<span class="sig-name descname"><span class="pre">findval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPNode.findval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPNode.findval" title="Permalink to this definition"></a></dt>
+<dd><p>Finds nodes with the given key and value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – the key to search for</p></li>
+<li><p><strong>val</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>) – the value to search for</p></li>
+<li><p><strong>recursive</strong> – if True, search recursively, otherwise only search
+this+children</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>] – a list of matching nodes</p>
 </dd>
 </dl>
 </dd></dl>
@@ -549,6 +578,37 @@ latest_output is what’s being changed and returned in new form.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPNode.rfind">
+<span class="sig-name descname"><span class="pre">rfind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPNode.rfind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPNode.rfind" title="Permalink to this definition"></a></dt>
+<dd><p>Finds nodes matching the predicate, recursively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pred</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]) – a function that takes a node and returns True if it matches</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>] – a list of matching nodes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.qepparser.QEPNode.rfindval">
+<span class="sig-name descname"><span class="pre">rfindval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/qepparser.html#QEPNode.rfindval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.qepparser.QEPNode.rfindval" title="Permalink to this definition"></a></dt>
+<dd><p>Finds nodes with the given key and value, recursively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – the key to search for</p></li>
+<li><p><strong>val</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>) – the value to search for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Plan</span></code>] – a list of matching nodes</p>
 </dd>
 </dl>
 </dd></dl>
