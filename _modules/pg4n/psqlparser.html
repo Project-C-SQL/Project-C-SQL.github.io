@@ -123,36 +123,50 @@
   <h1>Source code for pg4n.psqlparser</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Parse psql output.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TextIO</span>
-<span class="kn">from</span> <span class="nn">pyparsing</span> <span class="kn">import</span> <span class="n">CaselessLiteral</span><span class="p">,</span> <span class="n">Char</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">MatchFirst</span><span class="p">,</span> <span class="n">OneOrMore</span><span class="p">,</span> \
-    <span class="n">ParseException</span><span class="p">,</span> <span class="n">ParseResults</span><span class="p">,</span> <span class="n">ParserElement</span><span class="p">,</span> <span class="n">SkipTo</span><span class="p">,</span> <span class="n">Word</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">pyparsing</span> <span class="kn">import</span> <span class="n">CaselessLiteral</span><span class="p">,</span> <span class="n">Char</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">MatchFirst</span><span class="p">,</span> \
+    <span class="n">ParseException</span><span class="p">,</span> <span class="n">ParseResults</span><span class="p">,</span> <span class="n">ParserElement</span><span class="p">,</span> <span class="n">StringEnd</span><span class="p">,</span> <span class="n">Word</span><span class="p">,</span> <span class="n">ZeroOrMore</span><span class="p">,</span> \
     <span class="n">identbodychars</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">printable</span>
 
-<span class="n">ParserElement</span><span class="o">.</span><span class="n">enablePackrat</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># memoization optimization</span>
+<span class="c1"># Turn on memoization optimization</span>
+<span class="n">ParserElement</span><span class="o">.</span><span class="n">enablePackrat</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="c1"># default whitespace rules complicate things needlessly, remove them:</span>
+<span class="n">ParserElement</span><span class="o">.</span><span class="n">setDefaultWhitespaceChars</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="PsqlParser"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlparser.PsqlParser">[docs]</a><span class="k">class</span> <span class="nc">PsqlParser</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Parses psql output for syntactic analysis.&quot;&quot;&quot;</span>
 
-    <span class="c1"># class debug</span>
     <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">fout</span><span class="p">:</span> <span class="n">TextIO</span>
 
     <span class="n">prompt_chars</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">identbodychars</span>
-    <span class="n">control_codes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\x1b</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\x08</span><span class="s1">&#39;</span>
     <span class="n">stmt_end</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span>
     <span class="c1"># Naively, SQL statement body can contain all printable characters</span>
     <span class="c1"># (incl. whitespace), apart from &#39;;&#39;</span>
     <span class="n">stmt_chars</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> \
-        <span class="n">printable</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">stmt_end</span><span class="p">))</span> <span class="o">+</span> <span class="n">control_codes</span>
+        <span class="n">printable</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">stmt_end</span><span class="p">))</span>
+
+    <span class="c1"># rev means reversed, these are for performance reasons.</span>
 
     <span class="c1"># parser tokens:</span>
     <span class="c1"># superusers have =# prompt</span>
     <span class="n">tok_prompt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Word</span><span class="p">(</span><span class="n">prompt_chars</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;=&gt;&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;=#&quot;</span><span class="p">))</span>
+        <span class="n">Char</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Word</span><span class="p">(</span><span class="n">prompt_chars</span><span class="p">)</span> <span class="o">+</span> \
+        <span class="p">(</span><span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;=&gt;&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;=#&quot;</span><span class="p">))</span>
+    <span class="n">tok_rev_prompt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
+        <span class="p">(</span><span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;&gt;=&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;#=&quot;</span><span class="p">))</span> <span class="o">+</span> \
+        <span class="n">Word</span><span class="p">(</span><span class="n">prompt_chars</span><span class="p">)</span> <span class="o">+</span> <span class="n">Char</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
     <span class="n">tok_prompt_linebreak</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;-#&quot;</span><span class="p">)</span>
+        <span class="n">Char</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Word</span><span class="p">(</span><span class="n">prompt_chars</span><span class="p">)</span> <span class="o">+</span> \
+        <span class="p">(</span><span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;-#&quot;</span><span class="p">))</span>
+    <span class="n">tok_rev_prompt_linebreak</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
+        <span class="p">(</span><span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;&gt;-&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;#-&quot;</span><span class="p">))</span> <span class="o">+</span> \
+        <span class="n">Word</span><span class="p">(</span><span class="n">prompt_chars</span><span class="p">)</span> <span class="o">+</span> <span class="n">Char</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
     <span class="n">tok_stmt_end</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
         <span class="n">Char</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
 
@@ -161,8 +175,12 @@
         <span class="n">MatchFirst</span><span class="p">([</span><span class="n">tok_prompt</span><span class="p">])</span>
     <span class="n">match_sql_stmt_start</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
         <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;SELECT &quot;</span><span class="p">)</span>  <span class="c1"># All interesting stmts are &#39;select&#39;</span>
+    <span class="n">match_rev_sql_stmt_start</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
+        <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot; TCELES&quot;</span><span class="p">)</span>
     <span class="n">match_sql_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
         <span class="n">Word</span><span class="p">(</span><span class="n">stmt_chars</span><span class="p">)</span>
+    <span class="n">match_whole_rev_sql_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
+        <span class="n">tok_stmt_end</span> <span class="o">+</span> <span class="o">...</span> <span class="o">+</span> <span class="n">match_rev_sql_stmt_start</span>
     <span class="n">match_sql_stmt_end</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
         <span class="n">tok_stmt_end</span>
     <span class="n">match_error</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
@@ -172,62 +190,148 @@
     <span class="n">parse_sql_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
         <span class="n">match_prompt</span> <span class="o">+</span> <span class="n">match_sql_stmt</span> <span class="o">+</span> <span class="n">match_sql_stmt_end</span>
 
+    <span class="c1"># magic strings related to solely to ctrl-R use are</span>
+    <span class="c1"># &quot;\r\n\x1b[?2004l\r&quot;, &quot;\r\n\r\r\n&quot; and &quot;\x08\r\n&quot;.</span>
+    <span class="n">match_rev_magical_returns</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
+        <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n\x1b</span><span class="s2">[?2004l</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> \
+        <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n\r\r\n</span><span class="s2">&quot;</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> \
+        <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x08\r\n</span><span class="s2">&quot;</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plain constructor for PsqlParser.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;psqlparser.log&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
-<div class="viewcode-block" id="PsqlParser.parse_for_new_prompt"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlparser.PsqlParser.parse_for_new_prompt">[docs]</a>    <span class="k">def</span> <span class="nf">parse_for_new_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psql</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Parse for an empty prompt, usually to detect when a query \</span>
+<div class="viewcode-block" id="PsqlParser.parse_new_prompt"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlparser.PsqlParser.parse_new_prompt">[docs]</a>    <span class="k">def</span> <span class="nf">parse_new_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psql</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Parse for an empty prompt, to detect when a query \</span>
 <span class="sd">        evaluation has ended.</span>
 
-<span class="sd">        Returns an empty list if none found.</span>
+<span class="sd">        :param psql: Raw console output that includes terminal control codes.</span>
+<span class="sd">        :returns: an empty list if no prompt found. Otherwise has [&#39; &gt;=&#39;] or \</span>
+<span class="sd">        [&#39; #=&#39;].</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># cheaper and easier to reverse &amp; start from the end</span>
+        <span class="n">psql_rev</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">psql</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">prompt_res</span><span class="p">:</span> <span class="n">ParseResults</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># TODO: For some reason Literal(&quot; &gt;=&quot;) does not provide a match,</span>
+        <span class="c1"># but works fine without the whitespace..</span>
+        <span class="n">match_rev_prompt_end</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
+            <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot; &gt;=&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot; #=&quot;</span><span class="p">)</span>
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">prompt_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_prompt</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql</span><span class="p">)</span>
+            <span class="n">prompt_res</span> <span class="o">=</span> <span class="n">match_rev_prompt_end</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql_rev</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">ParseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">explain</span><span class="p">())</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;psqlparser.log&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">explain</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">prompt_res</span><span class="p">:</span>
             <span class="n">results</span> <span class="o">=</span> <span class="n">prompt_res</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="PsqlParser.parse_first_found_stmt"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlparser.PsqlParser.parse_first_found_stmt">[docs]</a>    <span class="k">def</span> <span class="nf">parse_first_found_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psql</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Parse for the content between two prompts. Returns an empty \</span>
-<span class="sd">        list if there is no statement or there was an error.</span>
+<div class="viewcode-block" id="PsqlParser.parse_new_prompt_and_rest"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlparser.PsqlParser.parse_new_prompt_and_rest">[docs]</a>    <span class="k">def</span> <span class="nf">parse_new_prompt_and_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psql</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Parse for an empty prompt and everything preceding it \</span>
+<span class="sd">        to 2 cells.</span>
 
-<span class="sd">        Expected to be deprecated when detecting multiple statements is</span>
-<span class="sd">        implemented.</span>
+<span class="sd">        :param psql: Raw console output that includes terminal control codes.</span>
+<span class="sd">        :returns: a two-part list with everything before the prompt \</span>
+<span class="sd">        line and then the prompt, to allow easy message injection.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">match_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-            <span class="o">...</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_sql_stmt_start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_sql_stmt</span> <span class="o">+</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">match_sql_stmt_end</span>
-        <span class="n">match_query_error</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-            <span class="n">SkipTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">match_error</span><span class="p">)</span>
+        <span class="c1"># cheaper and easier to reverse &amp; start from the end</span>
+        <span class="n">psql_rev</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">psql</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">prompt_res</span><span class="p">:</span> <span class="n">ParseResults</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">match_rev_prompt_and_then_rest</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
+            <span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="s2">&quot; &gt;=&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot; #=&quot;</span><span class="p">))</span> <span class="o">+</span> \
+            <span class="n">Word</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_chars</span><span class="p">)</span> <span class="o">+</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;?[</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="o">...</span> <span class="o">+</span> <span class="n">StringEnd</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">prompt_res</span> <span class="o">=</span> <span class="n">match_rev_prompt_and_then_rest</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql_rev</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ParseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;psqlparser.log&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">explain</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">prompt_res</span><span class="p">:</span>
+            <span class="n">res_list</span> <span class="o">=</span> <span class="n">prompt_res</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">res_list</span><span class="p">[</span><span class="mi">3</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                       <span class="n">res_list</span><span class="p">[</span><span class="mi">2</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                       <span class="n">res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                       <span class="n">res_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                       <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="PsqlParser.parse_magical_return"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlparser.PsqlParser.parse_magical_return">[docs]</a>    <span class="k">def</span> <span class="nf">parse_magical_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psql</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Parse for weird Return presses.</span>
+
+<span class="sd">        :param psql: Raw console output that includes terminal control codes.</span>
+<span class="sd">        :returns: an empty list if no presses are found. \</span>
+<span class="sd">        Otherwise has newline text.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">psql_rev</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">psql</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">magical_return_res</span><span class="p">:</span> <span class="n">ParseResults</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">magical_return_res</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">match_rev_magical_returns</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql_rev</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ParseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;psqlparser.log&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">explain</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">magical_return_res</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">magical_return_res</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="PsqlParser.parse_last_found_stmt"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlparser.PsqlParser.parse_last_found_stmt">[docs]</a>    <span class="k">def</span> <span class="nf">parse_last_found_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psql</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Parse for last SQL query statement in a string.</span>
+
+<span class="sd">        :param psql: screenscraped psql string</span>
+
+<span class="sd">        :returns: parsed SQL query as plain string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># reverse given string, match reversed tokens, pick first match,</span>
+        <span class="c1"># then reverse the matched string.</span>
+        <span class="n">psql_rev</span> <span class="o">=</span> <span class="n">psql</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># slicing is fastest operation for reversing</span>
+
+        <span class="c1"># BUG(?): Assumes only single statement query</span>
+        <span class="c1"># BUG: Will match until previous SELECT query, if newest is e.g INSERT</span>
+        <span class="c1">#      Fix it by matching rev_stmt_start also against rev_prompt</span>
+        <span class="c1"># TODO: strip &quot;-&gt;&quot;/&quot;-#&quot; from string to allow multiline queries</span>
+        <span class="n">match_last_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
+            <span class="n">ZeroOrMore</span><span class="p">(</span><span class="n">Char</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Char</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_whole_rev_sql_stmt</span>
 
         <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">stmt_res</span><span class="p">:</span> <span class="n">ParseResults</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">error_res</span><span class="p">:</span> <span class="n">ParseResults</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">stmt_res</span> <span class="o">=</span> <span class="n">match_stmt</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql</span><span class="p">)</span>
+            <span class="n">stmt_res</span> <span class="o">=</span> <span class="n">match_last_stmt</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql_rev</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">ParseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">explain</span><span class="p">())</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">error_res</span> <span class="o">=</span> <span class="n">match_query_error</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">ParseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">explain</span><span class="p">())</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;psqlparser.log&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">explain</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">stmt_res</span><span class="p">:</span>
             <span class="n">stmt_res_list</span> <span class="o">=</span> <span class="n">stmt_res</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt_res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">stmt_res_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">stmt_res_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
-        <span class="k">if</span> <span class="n">error_res</span><span class="p">:</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">return</span> <span class="n">results</span></div></div>
+            <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stmt_res_list</span><span class="p">)</span>
+
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                       <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">2</span><span class="p">],</span>
+                       <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">3</span><span class="p">]]</span>  <span class="c1"># reverse order</span>
+
+        <span class="n">reversed_flattened_res</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> \
+            <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">results</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reversed_flattened_res</span></div></div>
 </pre></div>
 
            </div>
@@ -244,7 +348,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f9503555d20>
+    <jinja2.runtime.BlockReference object at 0x7f268daaab30>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

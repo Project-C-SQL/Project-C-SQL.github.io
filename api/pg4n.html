@@ -206,18 +206,8 @@ Returns a warning message if something was found, otherwise None.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Parses psql output for syntactic analysis.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.control_codes">
-<span class="sig-name descname"><span class="pre">control_codes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b\x08'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.control_codes" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.debug">
 <span class="sig-name descname"><span class="pre">debug</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.debug" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.fout">
-<span class="sig-name descname"><span class="pre">fout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TextIO</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.fout" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -227,12 +217,22 @@ Returns a warning message if something was found, otherwise None.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_prompt">
-<span class="sig-name descname"><span class="pre">match_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{W:(0-9A-Z_a-zªµ·...)</span> <span class="pre">{'=&gt;'</span> <span class="pre">|</span> <span class="pre">'=#'}}}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_prompt" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">match_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{(</span> <span class="pre">)</span> <span class="pre">W:(0-9A-Z_a-zªµ·...)}</span> <span class="pre">{'=&gt;'</span> <span class="pre">|</span> <span class="pre">'=#'}}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_prompt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_rev_magical_returns">
+<span class="sig-name descname"><span class="pre">match_rev_magical_returns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{'\rl4002?[\x1b\n\r'</span> <span class="pre">|</span> <span class="pre">'\n\r\r\n\r'}</span> <span class="pre">|</span> <span class="pre">'\n\r\x08'}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_rev_magical_returns" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_rev_sql_stmt_start">
+<span class="sig-name descname"><span class="pre">match_rev_sql_stmt_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'</span> <span class="pre">TCELES'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_rev_sql_stmt_start" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_sql_stmt">
-<span class="sig-name descname"><span class="pre">match_sql_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">W:(-</span> <span class="pre">-:&lt;-~)</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_sql_stmt" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">match_sql_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">W:(	-</span> <span class="pre">-:&lt;-~)</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_sql_stmt" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -245,34 +245,70 @@ Returns a warning message if something was found, otherwise None.</p>
 <span class="sig-name descname"><span class="pre">match_sql_stmt_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SELECT</span> <span class="pre">'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_sql_stmt_start" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.match_whole_rev_sql_stmt">
+<span class="sig-name descname"><span class="pre">match_whole_rev_sql_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{(;)</span> <span class="pre">...}</span> <span class="pre">'</span> <span class="pre">TCELES'}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.match_whole_rev_sql_stmt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_first_found_stmt">
-<span class="sig-name descname"><span class="pre">parse_first_found_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlparser.html#PsqlParser.parse_first_found_stmt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_first_found_stmt" title="Permalink to this definition"></a></dt>
-<dd><p>Parse for the content between two prompts. Returns an empty         list if there is no statement or there was an error.</p>
-<p>Expected to be deprecated when detecting multiple statements is
-implemented.</p>
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_last_found_stmt">
+<span class="sig-name descname"><span class="pre">parse_last_found_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlparser.html#PsqlParser.parse_last_found_stmt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_last_found_stmt" title="Permalink to this definition"></a></dt>
+<dd><p>Parse for last SQL query statement in a string.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>psql</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – screenscraped psql string</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> – parsed SQL query as plain string.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_for_new_prompt">
-<span class="sig-name descname"><span class="pre">parse_for_new_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlparser.html#PsqlParser.parse_for_new_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_for_new_prompt" title="Permalink to this definition"></a></dt>
-<dd><p>Parse for an empty prompt, usually to detect when a query         evaluation has ended.</p>
-<p>Returns an empty list if none found.</p>
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_magical_return">
+<span class="sig-name descname"><span class="pre">parse_magical_return</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlparser.html#PsqlParser.parse_magical_return"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_magical_return" title="Permalink to this definition"></a></dt>
+<dd><p>Parse for weird Return presses.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>psql</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Raw console output that includes terminal control codes.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] – an empty list if no presses are found.         Otherwise has newline text.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_new_prompt">
+<span class="sig-name descname"><span class="pre">parse_new_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlparser.html#PsqlParser.parse_new_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_new_prompt" title="Permalink to this definition"></a></dt>
+<dd><p>Parse for an empty prompt, to detect when a query         evaluation has ended.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>psql</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Raw console output that includes terminal control codes.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] – an empty list if no prompt found. Otherwise has [’ &gt;=’] or         [’ #=’].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_new_prompt_and_rest">
+<span class="sig-name descname"><span class="pre">parse_new_prompt_and_rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psql</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlparser.html#PsqlParser.parse_new_prompt_and_rest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_new_prompt_and_rest" title="Permalink to this definition"></a></dt>
+<dd><p>Parse for an empty prompt and everything preceding it         to 2 cells.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>psql</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Raw console output that includes terminal control codes.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] – a two-part list with everything before the prompt         line and then the prompt, to allow easy message injection.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.parse_sql_stmt">
-<span class="sig-name descname"><span class="pre">parse_sql_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{{{W:(0-9A-Z_a-zªµ·...)</span> <span class="pre">{'=&gt;'</span> <span class="pre">|</span> <span class="pre">'=#'}}}</span> <span class="pre">W:(-</span> <span class="pre">-:&lt;-~)}</span> <span class="pre">(;)}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_sql_stmt" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">parse_sql_stmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{{{(</span> <span class="pre">)</span> <span class="pre">W:(0-9A-Z_a-zªµ·...)}</span> <span class="pre">{'=&gt;'</span> <span class="pre">|</span> <span class="pre">'=#'}}</span> <span class="pre">W:(	-</span> <span class="pre">-:&lt;-~)}</span> <span class="pre">(;)}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.parse_sql_stmt" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -282,7 +318,7 @@ implemented.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.stmt_chars">
-<span class="sig-name descname"><span class="pre">stmt_chars</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!&quot;#$%&amp;\'()*+,-./:&lt;=&gt;?&#64;[\\]^_`{|}~</span> <span class="pre">\t\n\r\x0b\x0c\x1b\x08'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.stmt_chars" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">stmt_chars</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!&quot;#$%&amp;\'()*+,-./:&lt;=&gt;?&#64;[\\]^_`{|}~</span> <span class="pre">\t\n\r\x0b\x0c'</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.stmt_chars" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -292,12 +328,22 @@ implemented.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.tok_prompt">
-<span class="sig-name descname"><span class="pre">tok_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{W:(0-9A-Z_a-zªµ·...)</span> <span class="pre">{'=&gt;'</span> <span class="pre">|</span> <span class="pre">'=#'}}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.tok_prompt" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tok_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{(</span> <span class="pre">)</span> <span class="pre">W:(0-9A-Z_a-zªµ·...)}</span> <span class="pre">{'=&gt;'</span> <span class="pre">|</span> <span class="pre">'=#'}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.tok_prompt" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.tok_prompt_linebreak">
-<span class="sig-name descname"><span class="pre">tok_prompt_linebreak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'-&gt;'</span> <span class="pre">|</span> <span class="pre">'-#'}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.tok_prompt_linebreak" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tok_prompt_linebreak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{(</span> <span class="pre">)</span> <span class="pre">W:(0-9A-Z_a-zªµ·...)}</span> <span class="pre">{'-&gt;'</span> <span class="pre">|</span> <span class="pre">'-#'}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.tok_prompt_linebreak" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.tok_rev_prompt">
+<span class="sig-name descname"><span class="pre">tok_rev_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{{'&gt;='</span> <span class="pre">|</span> <span class="pre">'#='}</span> <span class="pre">W:(0-9A-Z_a-zªµ·...)}</span> <span class="pre">(</span> <span class="pre">)}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.tok_rev_prompt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlparser.PsqlParser.tok_rev_prompt_linebreak">
+<span class="sig-name descname"><span class="pre">tok_rev_prompt_linebreak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{{{'&gt;-'</span> <span class="pre">|</span> <span class="pre">'#-'}</span> <span class="pre">W:(0-9A-Z_a-zªµ·...)}</span> <span class="pre">(</span> <span class="pre">)}</span></em><a class="headerlink" href="#pg4n.psqlparser.PsqlParser.tok_rev_prompt_linebreak" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -311,43 +357,30 @@ implemented.</p>
 <section id="module-pg4n.psqlwrapper">
 <span id="pg4n-psqlwrapper-module"></span><h2>pg4n.psqlwrapper module<a class="headerlink" href="#module-pg4n.psqlwrapper" title="Permalink to this heading"></a></h2>
 <p>Interface with psql and capture all input and output.</p>
+<p>Uses pexpect in combination with pyte for interfacing and screen-scraping</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.psqlwrapper.</span></span><span class="sig-name descname"><span class="pre">PsqlWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_name_parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Handles terminal interfacing with psql, using the parameter parser     to pick up relevant SQL statements for the hook function.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.analyze">
-<span class="sig-name descname"><span class="pre">analyze</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.analyze" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
+<p>Only one (static) class instance is intended for use in program.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output">
-<span class="sig-name descname"><span class="pre">check_and_act_on_repl_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latest_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psql_log</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.check_and_act_on_repl_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output" title="Permalink to this definition"></a></dt>
-<dd><p>Detect if psql has run a statement and is asking for         a new statement (“=&gt; ” prompt).</p>
-<p>Entering a statement will always lead to a new prompt, so now         the output_log will be examined if an interesting statement was run,         and if it was run successfully. If so, add a fitting message in         before the new prompt.
-psql_log is only needed for analysis.
-latest_output is what’s being changed and returned in new form.</p>
+<span class="sig-name descname"><span class="pre">check_and_act_on_repl_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latest_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.check_and_act_on_repl_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output" title="Permalink to this definition"></a></dt>
+<dd><p>Check if user has hit Return so we can start analyzing,         or if a fresh prompt has come in and we can show them a helpful         message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>latest_output</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – is used for Return press and fresh prompt         analysis. It is also what the helpful message will be injected to.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> – output with injected semantic error messages.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.db_name">
-<span class="sig-name descname"><span class="pre">db_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bytes</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b''</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.db_name" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.debug">
 <span class="sig-name descname"><span class="pre">debug</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.debug" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.fout">
-<span class="sig-name descname"><span class="pre">fout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TextIO</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.fout" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -355,42 +388,33 @@ latest_output is what’s being changed and returned in new form.</p>
 <span class="sig-name descname"><span class="pre">ifilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.ifilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.ifilter" title="Permalink to this definition"></a></dt>
 <dd><p>User input filter function for pexpect.interact: not used.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – user input characters.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> – unchanged input.</p>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.input_log">
-<span class="sig-name descname"><span class="pre">input_log</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bytes</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b''</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.input_log" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.ofilter">
 <span class="sig-name descname"><span class="pre">ofilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.ofilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.ofilter" title="Permalink to this definition"></a></dt>
-<dd><p>Forward output to check_and_act_on_repl_output() and flush         output log if substitute output is returned and replace output         with it accordingly.</p>
+<dd><p>Forward output to <cite>check_and_act_on_repl_output()</cite> and feed         output to pyte screen for future screen-scraping.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>output</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – output seen on terminal screen.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> – output with injected semantic error messages.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.output_log">
-<span class="sig-name descname"><span class="pre">output_log</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bytes</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b''</span></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.output_log" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.parser">
-<span class="sig-name descname"><span class="pre">parser</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pg4n.psqlparser.PsqlParser" title="pg4n.psqlparser.PsqlParser"><span class="pre">PsqlParser</span></a></em><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.parser" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
-<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.replace_prompt">
-<span class="sig-name descname"><span class="pre">replace_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_prompt_msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.replace_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.replace_prompt" title="Permalink to this definition"></a></dt>
-<dd><p>Fit the new message in the right place,         just on the previous line before new prompt.</p>
+<dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.start" title="Permalink to this definition"></a></dt>
+<dd><p>Start psql process and then start feeding hook function with         intercepted output.</p>
 </dd></dl>
 
 </dd></dl>
@@ -732,7 +756,7 @@ Throws sqlglot.ParseError on invalid sql.</p>
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f950340dfc0>
+    <jinja2.runtime.BlockReference object at 0x7f268d45ba60>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

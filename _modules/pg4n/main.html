@@ -129,9 +129,10 @@
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">psqlwrapper</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">wrap</span> <span class="o">=</span> <span class="n">psqlwrapper</span><span class="o">.</span><span class="n">PsqlWrapper</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
+        <span class="n">psql</span> <span class="o">=</span> <span class="n">psqlwrapper</span><span class="o">.</span><span class="n">PsqlWrapper</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
                                        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;Helpful message&quot;</span><span class="p">,</span>
                                        <span class="n">psqlparser</span><span class="o">.</span><span class="n">PsqlParser</span><span class="p">())</span>
+        <span class="n">psql</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span><span class="si">}</span><span class="s2"> main.py &lt;database name&gt;&quot;</span><span class="p">)</span></div>
 
@@ -154,7 +155,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f95037edf60>
+    <jinja2.runtime.BlockReference object at 0x7f268d4b1240>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
