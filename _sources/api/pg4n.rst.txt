@@ -1,14 +1,6 @@
 pg4n package
 ============
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   pg4n.test
-
 Submodules
 ----------
 
