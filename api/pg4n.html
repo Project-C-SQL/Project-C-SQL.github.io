@@ -70,6 +70,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.orderby.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.psqlconninfo">pg4n.psqlconninfo module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.psqlconninfo.PsqlConnInfo"><code class="docutils literal notranslate"><span class="pre">PsqlConnInfo</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pg4n.psqlparser">pg4n.psqlparser module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.psqlparser.PsqlParser"><code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code></a></li>
 </ul>
@@ -84,6 +88,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.QEPParser"><code class="docutils literal notranslate"><span class="pre">QEPParser</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.node"><code class="docutils literal notranslate"><span class="pre">node</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.qepparser.qep"><code class="docutils literal notranslate"><span class="pre">qep</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.semanticrouter">pg4n.semanticrouter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.semanticrouter.SemanticRouter"><code class="docutils literal notranslate"><span class="pre">SemanticRouter</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pg4n.sqlparser">pg4n.sqlparser module</a><ul>
@@ -175,7 +183,12 @@ Returns a warning message if something was found, otherwise None.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pg4n.main.main">
 <span class="sig-prename descclassname"><span class="pre">pg4n.main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/main.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.main.main" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-pg4n.orderby">
@@ -195,6 +208,72 @@ Returns a warning message if something was found, otherwise None.</p>
 <dt class="sig sig-object py" id="pg4n.orderby.main">
 <span class="sig-prename descclassname"><span class="pre">pg4n.orderby.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/orderby.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.orderby.main" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+</section>
+<section id="module-pg4n.psqlconninfo">
+<span id="pg4n-psqlconninfo-module"></span><h2>pg4n.psqlconninfo module<a class="headerlink" href="#module-pg4n.psqlconninfo" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.psqlconninfo.</span></span><span class="sig-name descname"><span class="pre">PsqlConnInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psql_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlconninfo.html#PsqlConnInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Get PostgreSQL server address, port, database name, and user via     psql by supplying same arguments as the original psql process. This     way we can avoid writing a command-line argument parser.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlconninfo.html#PsqlConnInfo.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.get" title="Permalink to this definition"></a></dt>
+<dd><p>Get 5-tuple that has the PostgreSQL host, port, user, pass, and db         name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.tok_database">
+<span class="sig-name descname"><span class="pre">tok_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">W:(0-9A-Z_a-zªµ·...)</span></em><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.tok_database" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.tok_end">
+<span class="sig-name descname"><span class="pre">tok_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&quot;.'</span></em><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.tok_end" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.tok_host">
+<span class="sig-name descname"><span class="pre">tok_host</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">W:(.-9A-Z_a-zªµ·...)</span></em><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.tok_host" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.tok_port">
+<span class="sig-name descname"><span class="pre">tok_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">W:(0-9)</span></em><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.tok_port" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.tok_pre_database">
+<span class="sig-name descname"><span class="pre">tok_pre_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'You</span> <span class="pre">are</span> <span class="pre">connected</span> <span class="pre">to</span> <span class="pre">database</span> <span class="pre">&quot;'</span></em><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_database" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.tok_pre_host">
+<span class="sig-name descname"><span class="pre">tok_pre_host</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'&quot;</span> <span class="pre">on</span> <span class="pre">host</span> <span class="pre">&quot;'</span> <span class="pre">|</span> <span class="pre">'&quot;</span> <span class="pre">via</span> <span class="pre">socket</span> <span class="pre">in</span> <span class="pre">&quot;'}</span></em><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_host" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.tok_pre_port">
+<span class="sig-name descname"><span class="pre">tok_pre_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&quot;</span> <span class="pre">at</span> <span class="pre">port</span> <span class="pre">&quot;'</span></em><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_port" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.tok_pre_user">
+<span class="sig-name descname"><span class="pre">tok_pre_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&quot;</span> <span class="pre">as</span> <span class="pre">user</span> <span class="pre">&quot;'</span></em><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_user" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.psqlconninfo.PsqlConnInfo.tok_user">
+<span class="sig-name descname"><span class="pre">tok_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ParserElement</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">W:(0-9A-Z_a-zªµ·...)</span></em><a class="headerlink" href="#pg4n.psqlconninfo.PsqlConnInfo.tok_user" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
 
 </section>
 <section id="module-pg4n.psqlparser">
@@ -415,6 +494,11 @@ Returns a warning message if something was found, otherwise None.</p>
 <dt class="sig sig-object py" id="pg4n.psqlwrapper.PsqlWrapper.start">
 <span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/psqlwrapper.html#PsqlWrapper.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.psqlwrapper.PsqlWrapper.start" title="Permalink to this definition"></a></dt>
 <dd><p>Start psql process and then start feeding hook function with         intercepted output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -590,6 +674,36 @@ this+children</p></li>
 </dd></dl>
 
 </section>
+<section id="module-pg4n.semanticrouter">
+<span id="pg4n-semanticrouter-module"></span><h2>pg4n.semanticrouter module<a class="headerlink" href="#module-pg4n.semanticrouter" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.semanticrouter.SemanticRouter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.semanticrouter.</span></span><span class="sig-name descname"><span class="pre">SemanticRouter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pg_host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pg_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pg_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pg_pass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pg_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/semanticrouter.html#SemanticRouter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.semanticrouter.SemanticRouter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Analyze given SQL queries via a plethora of analysis modules.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.semanticrouter.SemanticRouter.run_analysis">
+<span class="sig-name descname"><span class="pre">run_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/semanticrouter.html#SemanticRouter.run_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.semanticrouter.SemanticRouter.run_analysis" title="Permalink to this definition"></a></dt>
+<dd><p>Run analysis modules on SQL query string and get an insightful         message in return.</p>
+<blockquote>
+<div><p>Semantic router (some day) implements basic heuristics to avoid
+running all the modules on all queries. For now, it is dumb brute
+force router.</p>
+</div></blockquote>
+<dl class="field-list simple">
+</dl>
+<p>is newline (carriage return 
+will be added by         wrapper).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-pg4n.sqlparser">
 <span id="pg4n-sqlparser-module"></span><h2>pg4n.sqlparser module<a class="headerlink" href="#module-pg4n.sqlparser" title="Permalink to this heading"></a></h2>
 <dl class="py class">
@@ -756,7 +870,7 @@ Throws sqlglot.ParseError on invalid sql.</p>
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f268d45ba60>
+    <jinja2.runtime.BlockReference object at 0x7fb0c5eecfd0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

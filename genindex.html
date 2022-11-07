@@ -68,6 +68,10 @@
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.orderby.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.psqlconninfo">pg4n.psqlconninfo module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo"><code class="docutils literal notranslate"><span class="pre">PsqlConnInfo</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.psqlparser">pg4n.psqlparser module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.psqlparser.PsqlParser"><code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code></a></li>
 </ul>
@@ -82,6 +86,10 @@
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.qepparser.QEPParser"><code class="docutils literal notranslate"><span class="pre">QEPParser</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.qepparser.node"><code class="docutils literal notranslate"><span class="pre">node</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.qepparser.qep"><code class="docutils literal notranslate"><span class="pre">qep</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.semanticrouter">pg4n.semanticrouter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.semanticrouter.SemanticRouter"><code class="docutils literal notranslate"><span class="pre">SemanticRouter</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.sqlparser">pg4n.sqlparser module</a><ul>
@@ -219,6 +227,8 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.get">get() (pg4n.psqlconninfo.PsqlConnInfo method)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.sqlparser.SqlParser.get_column_name_from_column_expression">get_column_name_from_column_expression() (pg4n.sqlparser.SqlParser static method)</a>
 </li>
   </ul></td>
@@ -271,8 +281,6 @@
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_whole_rev_sql_stmt">match_whole_rev_sql_stmt (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     module
 
@@ -285,11 +293,15 @@
 </li>
         <li><a href="api/pg4n.html#module-pg4n.orderby">pg4n.orderby</a>
 </li>
+        <li><a href="api/pg4n.html#module-pg4n.psqlconninfo">pg4n.psqlconninfo</a>
+</li>
         <li><a href="api/pg4n.html#module-pg4n.psqlparser">pg4n.psqlparser</a>
 </li>
         <li><a href="api/pg4n.html#module-pg4n.psqlwrapper">pg4n.psqlwrapper</a>
 </li>
         <li><a href="api/pg4n.html#module-pg4n.qepparser">pg4n.qepparser</a>
+</li>
+        <li><a href="api/pg4n.html#module-pg4n.semanticrouter">pg4n.semanticrouter</a>
 </li>
         <li><a href="api/pg4n.html#module-pg4n.sqlparser">pg4n.sqlparser</a>
 </li>
@@ -373,6 +385,13 @@
 </li>
       </ul></li>
       <li>
+    pg4n.psqlconninfo
+
+      <ul>
+        <li><a href="api/pg4n.html#module-pg4n.psqlconninfo">module</a>
+</li>
+      </ul></li>
+      <li>
     pg4n.psqlparser
 
       <ul>
@@ -393,6 +412,13 @@
 
       <ul>
         <li><a href="api/pg4n.html#module-pg4n.qepparser">module</a>
+</li>
+      </ul></li>
+      <li>
+    pg4n.semanticrouter
+
+      <ul>
+        <li><a href="api/pg4n.html#module-pg4n.semanticrouter">module</a>
 </li>
       </ul></li>
       <li>
@@ -422,6 +448,8 @@
       <li><a href="api/pg4n.html#pg4n.sqlparser.PostgreSQLDataType.precision">precision (pg4n.sqlparser.PostgreSQLDataType attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.prompt_chars">prompt_chars (pg4n.psqlparser.PsqlParser attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo">PsqlConnInfo (class in pg4n.psqlconninfo)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser">PsqlParser (class in pg4n.psqlparser)</a>
 </li>
@@ -455,11 +483,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.qepparser.QEPNode.rfind">rfind() (pg4n.qepparser.QEPNode method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.qepparser.QEPNode.rfindval">rfindval() (pg4n.qepparser.QEPNode method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.qepparser.QEPAnalysis.root">root (pg4n.qepparser.QEPAnalysis property)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.semanticrouter.SemanticRouter.run_analysis">run_analysis() (pg4n.semanticrouter.SemanticRouter method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -467,12 +497,14 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pg4n.html#pg4n.sqlparser.SqlParser">SqlParser (class in pg4n.sqlparser)</a>
+      <li><a href="api/pg4n.html#pg4n.semanticrouter.SemanticRouter">SemanticRouter (class in pg4n.semanticrouter)</a>
 </li>
-      <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.start">start() (pg4n.psqlwrapper.PsqlWrapper method)</a>
+      <li><a href="api/pg4n.html#pg4n.sqlparser.SqlParser">SqlParser (class in pg4n.sqlparser)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.start">start() (pg4n.psqlwrapper.PsqlWrapper method)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.stmt_chars">stmt_chars (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.stmt_end">stmt_end (pg4n.psqlparser.PsqlParser attribute)</a>
@@ -485,17 +517,35 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.sqlparser.Column.table">table (pg4n.sqlparser.Column attribute)</a>
 </li>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_database">tok_database (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_end">tok_end (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_host">tok_host (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_port">tok_port (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_database">tok_pre_database (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_host">tok_pre_host (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_port">tok_pre_port (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_user">tok_pre_user (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_prompt">tok_prompt (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_prompt_linebreak">tok_prompt_linebreak (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_rev_prompt">tok_rev_prompt (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_rev_prompt_linebreak">tok_rev_prompt_linebreak (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_stmt_end">tok_stmt_end (pg4n.psqlparser.PsqlParser attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_user">tok_user (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.sqlparser.Column.type">type (pg4n.sqlparser.Column attribute)</a>
 </li>
@@ -518,7 +568,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f26911767a0>
+    <jinja2.runtime.BlockReference object at 0x7fb0c62566b0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

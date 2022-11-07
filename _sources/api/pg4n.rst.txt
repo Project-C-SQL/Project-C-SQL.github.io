@@ -28,6 +28,14 @@ pg4n.orderby module
    :undoc-members:
    :show-inheritance:
 
+pg4n.psqlconninfo module
+------------------------
+
+.. automodule:: pg4n.psqlconninfo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pg4n.psqlparser module
 ----------------------
 
@@ -48,6 +56,14 @@ pg4n.qepparser module
 ---------------------
 
 .. automodule:: pg4n.qepparser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.semanticrouter module
+--------------------------
+
+.. automodule:: pg4n.semanticrouter
    :members:
    :undoc-members:
    :show-inheritance:

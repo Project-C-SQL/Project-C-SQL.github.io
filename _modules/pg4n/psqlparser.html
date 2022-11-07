@@ -68,6 +68,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.orderby.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.psqlconninfo">pg4n.psqlconninfo module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo"><code class="docutils literal notranslate"><span class="pre">PsqlConnInfo</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.psqlparser">pg4n.psqlparser module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.psqlparser.PsqlParser"><code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code></a></li>
 </ul>
@@ -82,6 +86,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.qepparser.QEPParser"><code class="docutils literal notranslate"><span class="pre">QEPParser</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.qepparser.node"><code class="docutils literal notranslate"><span class="pre">node</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.qepparser.qep"><code class="docutils literal notranslate"><span class="pre">qep</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.semanticrouter">pg4n.semanticrouter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.semanticrouter.SemanticRouter"><code class="docutils literal notranslate"><span class="pre">SemanticRouter</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.sqlparser">pg4n.sqlparser module</a><ul>
@@ -247,12 +255,14 @@
 
         <span class="n">match_rev_prompt_and_then_rest</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
             <span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="s2">&quot; &gt;=&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot; #=&quot;</span><span class="p">))</span> <span class="o">+</span> \
-            <span class="n">Word</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_chars</span><span class="p">)</span> <span class="o">+</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;?[</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="o">...</span> <span class="o">+</span> <span class="n">StringEnd</span><span class="p">()</span>
-
+            <span class="n">Word</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_chars</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="p">(</span><span class="n">StringEnd</span><span class="p">()</span> <span class="o">|</span> <span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;?[</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> \
+                            <span class="o">...</span> <span class="o">+</span> <span class="n">StringEnd</span><span class="p">()))</span>
+        <span class="c1"># ^either stops after dbname or includes \x1b[?2004l...</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">prompt_res</span> <span class="o">=</span> <span class="n">match_rev_prompt_and_then_rest</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql_rev</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">ParseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">explain</span><span class="p">())</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;psqlparser.log&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">explain</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -260,11 +270,17 @@
 
         <span class="k">if</span> <span class="n">prompt_res</span><span class="p">:</span>
             <span class="n">res_list</span> <span class="o">=</span> <span class="n">prompt_res</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">res_list</span><span class="p">[</span><span class="mi">3</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                       <span class="n">res_list</span><span class="p">[</span><span class="mi">2</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
-                       <span class="n">res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
-                       <span class="n">res_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                       <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># includes \x1b[?2004l</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">res_list</span><span class="p">[</span><span class="mi">3</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                           <span class="n">res_list</span><span class="p">[</span><span class="mi">2</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                           <span class="n">res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                           <span class="n">res_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                           <span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># stops right after database name</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                           <span class="n">res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                           <span class="n">res_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                           <span class="p">]</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
@@ -348,7 +364,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f268daaab30>
+    <jinja2.runtime.BlockReference object at 0x7fb0c5a8db70>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
