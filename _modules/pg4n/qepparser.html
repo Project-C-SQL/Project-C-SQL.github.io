@@ -59,6 +59,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.cmp_domain_checker.CmpDomainChecker"><code class="docutils literal notranslate"><span class="pre">CmpDomainChecker</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.implied_expression_checker">pg4n.implied_expression_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker"><code class="docutils literal notranslate"><span class="pre">ImpliedExpressionChecker</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.main">pg4n.main module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
@@ -164,6 +168,7 @@
     <span class="s2">&quot;Index Name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="s2">&quot;Triggers&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="s2">&quot;Total Runtime&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="s2">&quot;One-Time Filter&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">})</span>
 
 <span class="n">qep</span> <span class="o">=</span> <span class="n">TypedDict</span><span class="p">(</span><span class="s2">&quot;QEP&quot;</span><span class="p">,</span> <span class="p">{</span>
@@ -295,13 +300,18 @@
 <div class="viewcode-block" id="QEPParser"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.qepparser.QEPParser">[docs]</a><span class="k">class</span> <span class="nc">QEPParser</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Performs analyses on given queries, returning resultant QEPAnalysis.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">constraint_exclusion</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="p">:</span> <span class="n">Connection</span> <span class="o">=</span> <span class="n">conn</span> <span class="ow">or</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># use constraint_exclusion to avoid unnecessary index scans</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
-            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;set constraint_exclusion = on;&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">constraint_exclusion</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;set constraint_exclusion = on;&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+                <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;set constraint_exclusion = off;&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref</span><span class="p">:</span>
@@ -354,7 +364,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f48f1d296f0>
+    <jinja2.runtime.BlockReference object at 0x7fbe59a940d0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

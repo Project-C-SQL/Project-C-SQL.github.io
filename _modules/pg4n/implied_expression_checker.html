@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pg4n.semanticrouter &mdash; PostgreSQL for novices  documentation</title>
+  <title>pg4n.implied_expression_checker &mdash; PostgreSQL for novices  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -127,7 +127,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>pg4n.semanticrouter</li>
+      <li>pg4n.implied_expression_checker</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -136,62 +136,62 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for pg4n.semanticrouter</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">psycopg</span>
-<span class="kn">from</span> <span class="nn">sqlglot</span> <span class="kn">import</span> <span class="n">exp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+  <h1>Source code for pg4n.implied_expression_checker</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">from</span> <span class="nn">.sqlparser</span> <span class="kn">import</span> <span class="n">SqlParser</span><span class="p">,</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">psycopg</span> <span class="kn">import</span> <span class="n">Connection</span>
+<span class="kn">import</span> <span class="nn">sqlglot.expressions</span> <span class="k">as</span> <span class="nn">exp</span>
+<span class="kn">from</span> <span class="nn">.sqlparser</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SqlParser</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.qepparser</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">QEPParser</span><span class="p">,</span>
+    <span class="n">QEPAnalysis</span><span class="p">,</span>
+    <span class="n">QEPNode</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="c1"># analysis modules</span>
-<span class="kn">from</span> <span class="nn">.cmp_domain_checker</span> <span class="kn">import</span> <span class="n">CmpDomainChecker</span>
 
+<div class="viewcode-block" id="ImpliedExpressionChecker"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker">[docs]</a><span class="k">class</span> <span class="nc">ImpliedExpressionChecker</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">,</span> <span class="n">sql_statement</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">db_connection</span><span class="p">:</span> <span class="n">Connection</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span> <span class="o">=</span> <span class="n">parsed_sql</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sql_statement</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">sql_statement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="p">:</span> <span class="n">Connection</span> <span class="o">=</span> <span class="n">db_connection</span>
 
-<div class="viewcode-block" id="SemanticRouter"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.semanticrouter.SemanticRouter">[docs]</a><span class="k">class</span> <span class="nc">SemanticRouter</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Analyze given SQL queries via a plethora of analysis modules.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">pg_host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">pg_port</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">pg_user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">pg_pass</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">pg_name</span><span class="p">:</span> <span class="nb">str</span>
-                 <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize Postgres connection with given paramaters.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pg_host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pg_host</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pg_port</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pg_port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pg_user</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pg_user</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pg_pass</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pg_pass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pg_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pg_name</span>
-
-<div class="viewcode-block" id="SemanticRouter.run_analysis"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.semanticrouter.SemanticRouter.run_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">run_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Run analysis modules on SQL query string and get an insightful \</span>
-<span class="sd">        message in return.</span>
-
-<span class="sd">        Semantic router (some day) implements basic heuristics to avoid</span>
-<span class="sd">        running all the modules on all queries. For now, it is dumb brute</span>
-<span class="sd">        force router.</span>
-<span class="sd">        :param sql_query: is a single well-formed query to run analytics on.</span>
-<span class="sd">        :returns: an insightful message that might include vt100-compatible \</span>
-<span class="sd">        control codes. \n is newline (carriage return \r will be added by \</span>
-<span class="sd">        wrapper).</span>
+<div class="viewcode-block" id="ImpliedExpressionChecker.check"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns warning_msg if implied expression is detected, otherwise None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;host=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_host</span> <span class="o">+</span>
-                             <span class="s2">&quot; port=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_port</span> <span class="o">+</span>
-                             <span class="s2">&quot; dbname=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_name</span> <span class="o">+</span>
-                             <span class="s2">&quot; user=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_user</span> <span class="o">+</span>
-                             <span class="s2">&quot; password=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_pass</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-            <span class="n">sql_parser</span><span class="p">:</span> <span class="n">SqlParser</span> <span class="o">=</span> <span class="n">SqlParser</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
-            <span class="n">sanitized_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span> <span class="o">=</span> <span class="n">sql_parser</span><span class="o">.</span><span class="n">parse_one</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
-            <span class="n">analysis_result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="c1"># Comparing different domains</span>
-            <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Column</span><span class="p">]</span> <span class="o">=</span> <span class="n">sql_parser</span><span class="o">.</span><span class="n">get_query_columns</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">)</span>
-            <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">CmpDomainChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+        <span class="k">def</span> <span class="nf">finder</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">QEPNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;One-Time Filter&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">None</span>
 
-            <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">analysis_result</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># No semantic errors found</span></div></div>
+        <span class="n">qep_parser_with_constraint_exclusion</span> <span class="o">=</span> \
+            <span class="n">QEPParser</span><span class="p">(</span><span class="n">conn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="p">,</span> <span class="n">constraint_exclusion</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">qep_analysis_with_constraint_exclusion</span> <span class="o">=</span> \
+            <span class="n">qep_parser_with_constraint_exclusion</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sql_statement</span><span class="p">)</span>
+        <span class="n">has_onetime_filter_with_constraint_exclusion</span> <span class="o">=</span> \
+            <span class="nb">len</span><span class="p">(</span><span class="n">qep_analysis_with_constraint_exclusion</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="n">finder</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+        <span class="n">qep_parser_without_constraint_exclusion</span> <span class="o">=</span> \
+            <span class="n">QEPParser</span><span class="p">(</span><span class="n">conn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="p">,</span> <span class="n">constraint_exclusion</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">qep_analysis_without_constraint_exclusion</span> <span class="o">=</span> \
+            <span class="n">qep_parser_without_constraint_exclusion</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sql_statement</span><span class="p">)</span>
+        <span class="n">has_onetime_filter_without_constraint_exclusion</span> <span class="o">=</span> \
+            <span class="nb">len</span><span class="p">(</span><span class="n">qep_analysis_without_constraint_exclusion</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="n">finder</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+        <span class="n">has_implied_expression</span> <span class="o">=</span> \
+            <span class="n">has_onetime_filter_with_constraint_exclusion</span> <span class="ow">and</span> \
+            <span class="ow">not</span> <span class="n">has_onetime_filter_without_constraint_exclusion</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_implied_expression</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">warning_msg</span> <span class="o">=</span> <span class="s2">&quot;Warning: Found impossible comparison due to column/table constraints [pg4n::ImpliedExpression]&quot;</span>
+
+        <span class="k">return</span> <span class="n">warning_msg</span></div></div>
 </pre></div>
 
            </div>
@@ -208,7 +208,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fbe595d7790>
+    <jinja2.runtime.BlockReference object at 0x7fbe59773fa0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

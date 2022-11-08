@@ -12,6 +12,14 @@ pg4n.cmp\_domain\_checker module
    :undoc-members:
    :show-inheritance:
 
+pg4n.implied\_expression\_checker module
+----------------------------------------
+
+.. automodule:: pg4n.implied_expression_checker
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pg4n.main module
 ----------------
 
