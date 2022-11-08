@@ -65,11 +65,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.orderby">pg4n.orderby module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#pg4n.orderby.has_subquery_order_by"><code class="docutils literal notranslate"><span class="pre">has_subquery_order_by()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pg4n.orderby.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pg4n.psqlconninfo">pg4n.psqlconninfo module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.psqlconninfo.PsqlConnInfo"><code class="docutils literal notranslate"><span class="pre">PsqlConnInfo</span></code></a></li>
 </ul>
@@ -98,6 +93,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.sqlparser.Column"><code class="docutils literal notranslate"><span class="pre">Column</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.sqlparser.PostgreSQLDataType"><code class="docutils literal notranslate"><span class="pre">PostgreSQLDataType</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.sqlparser.SqlParser"><code class="docutils literal notranslate"><span class="pre">SqlParser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.subquery_orderby_checker">pg4n.subquery_orderby_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.subquery_orderby_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pg4n.util">pg4n.util module</a></li>
@@ -189,25 +188,6 @@ Returns a warning message if something was found, otherwise None.</p>
 </dd>
 </dl>
 </dd></dl>
-
-</section>
-<section id="module-pg4n.orderby">
-<span id="pg4n-orderby-module"></span><h2>pg4n.orderby module<a class="headerlink" href="#module-pg4n.orderby" title="Permalink to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="pg4n.orderby.has_subquery_order_by">
-<span class="sig-prename descclassname"><span class="pre">pg4n.orderby.</span></span><span class="sig-name descname"><span class="pre">has_subquery_order_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/orderby.html#has_subquery_order_by"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.orderby.has_subquery_order_by" title="Permalink to this definition"></a></dt>
-<dd><p>Does not use the qep so far.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pg4n.orderby.main">
-<span class="sig-prename descclassname"><span class="pre">pg4n.orderby.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/orderby.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.orderby.main" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 </section>
 <section id="module-pg4n.psqlconninfo">
@@ -845,6 +825,29 @@ Throws sqlglot.ParseError on invalid sql.</p>
 </dd></dl>
 
 </section>
+<section id="module-pg4n.subquery_orderby_checker">
+<span id="pg4n-subquery-orderby-checker-module"></span><h2>pg4n.subquery_orderby_checker module<a class="headerlink" href="#module-pg4n.subquery_orderby_checker" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.subquery_orderby_checker.SubqueryOrderByChecker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.subquery_orderby_checker.</span></span><span class="sig-name descname"><span class="pre">SubqueryOrderByChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_sql</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qep_analysis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/subquery_orderby_checker.html#SubqueryOrderByChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.subquery_orderby_checker.SubqueryOrderByChecker" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.subquery_orderby_checker.SubqueryOrderByChecker.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/subquery_orderby_checker.html#SubqueryOrderByChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.subquery_orderby_checker.SubqueryOrderByChecker.check" title="Permalink to this definition"></a></dt>
+<dd><p>Returns warning message if there exists ORDER BY in a subquery,
+otherwise None.</p>
+<p>This check gives misses some situations with redundant ORDER BY but
+should never give false positives, only false negatives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-pg4n.util">
 <span id="pg4n-util-module"></span><h2>pg4n.util module<a class="headerlink" href="#module-pg4n.util" title="Permalink to this heading"></a></h2>
 </section>
@@ -870,7 +873,7 @@ Throws sqlglot.ParseError on invalid sql.</p>
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fb0c5eecfd0>
+    <jinja2.runtime.BlockReference object at 0x7f4aac6df4f0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

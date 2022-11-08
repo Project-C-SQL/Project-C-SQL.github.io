@@ -20,14 +20,6 @@ pg4n.main module
    :undoc-members:
    :show-inheritance:
 
-pg4n.orderby module
--------------------
-
-.. automodule:: pg4n.orderby
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pg4n.psqlconninfo module
 ------------------------
 
@@ -72,6 +64,14 @@ pg4n.sqlparser module
 ---------------------
 
 .. automodule:: pg4n.sqlparser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.subquery\_orderby\_checker module
+--------------------------------------
+
+.. automodule:: pg4n.subquery_orderby_checker
    :members:
    :undoc-members:
    :show-inheritance:
