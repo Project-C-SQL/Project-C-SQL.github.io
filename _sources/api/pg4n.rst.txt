@@ -76,6 +76,14 @@ pg4n.subquery\_orderby\_checker module
    :undoc-members:
    :show-inheritance:
 
+pg4n.subquery\_select\_checker module
+-------------------------------------
+
+.. automodule:: pg4n.subquery_select_checker
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pg4n.util module
 ----------------
 

@@ -99,6 +99,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.subquery_orderby_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.subquery_select_checker">pg4n.subquery_select_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.subquery_select_checker.SubquerySelectChecker"><code class="docutils literal notranslate"><span class="pre">SubquerySelectChecker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.subquery_select_checker.SubquerySelectContext"><code class="docutils literal notranslate"><span class="pre">SubquerySelectContext</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pg4n.util">pg4n.util module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pg4n">Module contents</a></li>
 </ul>
@@ -848,6 +853,38 @@ should never give false positives, only false negatives.</p>
 </dd></dl>
 
 </section>
+<section id="module-pg4n.subquery_select_checker">
+<span id="pg4n-subquery-select-checker-module"></span><h2>pg4n.subquery_select_checker module<a class="headerlink" href="#module-pg4n.subquery_select_checker" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.subquery_select_checker.SubquerySelectChecker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.subquery_select_checker.</span></span><span class="sig-name descname"><span class="pre">SubquerySelectChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_sql</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sql_parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/subquery_select_checker.html#SubquerySelectChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.subquery_select_checker.SubquerySelectChecker" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.subquery_select_checker.SubquerySelectChecker.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/subquery_select_checker.html#SubquerySelectChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.subquery_select_checker.SubquerySelectChecker.check" title="Permalink to this definition"></a></dt>
+<dd><p>Returns warning message if there no column SELECTed in a subquery is
+not used in that subquery of its own columns, otherwise returns None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.subquery_select_checker.SubquerySelectContext">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.subquery_select_checker.</span></span><span class="sig-name descname"><span class="pre">SubquerySelectContext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subquery</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/subquery_select_checker.html#SubquerySelectContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.subquery_select_checker.SubquerySelectContext" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.subquery_select_checker.SubquerySelectContext.subquery">
+<span class="sig-name descname"><span class="pre">subquery</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Expression</span></em><a class="headerlink" href="#pg4n.subquery_select_checker.SubquerySelectContext.subquery" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-pg4n.util">
 <span id="pg4n-util-module"></span><h2>pg4n.util module<a class="headerlink" href="#module-pg4n.util" title="Permalink to this heading"></a></h2>
 </section>
@@ -873,7 +910,7 @@ should never give false positives, only false negatives.</p>
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f4aac6df4f0>
+    <jinja2.runtime.BlockReference object at 0x7f48f18ed360>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
