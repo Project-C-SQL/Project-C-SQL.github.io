@@ -192,7 +192,7 @@
     <span class="n">match_sql_stmt_start</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
         <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;SELECT &quot;</span><span class="p">)</span>  <span class="c1"># All interesting stmts are &#39;select&#39;</span>
     <span class="n">match_rev_sql_stmt_start</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot; TCELES&quot;</span><span class="p">)</span>
+        <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot; TCELES&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot; &gt;=&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot; #=&quot;</span><span class="p">))</span>
     <span class="n">match_sql_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
         <span class="n">Word</span><span class="p">(</span><span class="n">stmt_chars</span><span class="p">)</span>
     <span class="n">match_whole_rev_sql_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
@@ -349,9 +349,9 @@
             <span class="n">stmt_res_list</span> <span class="o">=</span> <span class="n">stmt_res</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
             <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stmt_res_list</span><span class="p">)</span>
 
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
-                       <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">2</span><span class="p">],</span>
-                       <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">3</span><span class="p">]]</span>  <span class="c1"># reverse order</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">2</span><span class="p">],</span>
+                       <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">3</span><span class="p">],</span>
+                       <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">4</span><span class="p">]]</span>  <span class="c1"># reverse order</span>
 
         <span class="n">reversed_flattened_res</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> \
             <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">results</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -372,7 +372,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fbe59819e70>
+    <jinja2.runtime.BlockReference object at 0x7fc6958621a0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

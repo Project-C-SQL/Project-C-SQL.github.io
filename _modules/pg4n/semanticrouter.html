@@ -142,10 +142,13 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">.sqlparser</span> <span class="kn">import</span> <span class="n">SqlParser</span><span class="p">,</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">.qepparser</span> <span class="kn">import</span> <span class="n">QEPAnalysis</span><span class="p">,</span> <span class="n">QEPParser</span>
 
 <span class="c1"># analysis modules</span>
 <span class="kn">from</span> <span class="nn">.cmp_domain_checker</span> <span class="kn">import</span> <span class="n">CmpDomainChecker</span>
-
+<span class="kn">from</span> <span class="nn">.subquery_orderby_checker</span> <span class="kn">import</span> <span class="n">SubqueryOrderByChecker</span>
+<span class="kn">from</span> <span class="nn">.subquery_select_checker</span> <span class="kn">import</span> <span class="n">SubquerySelectChecker</span>
+<span class="kn">from</span> <span class="nn">.implied_expression_checker</span> <span class="kn">import</span> <span class="n">ImpliedExpressionChecker</span>
 
 <div class="viewcode-block" id="SemanticRouter"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.semanticrouter.SemanticRouter">[docs]</a><span class="k">class</span> <span class="nc">SemanticRouter</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Analyze given SQL queries via a plethora of analysis modules.&quot;&quot;&quot;</span>
@@ -183,6 +186,7 @@
                              <span class="s2">&quot; password=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_pass</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">sql_parser</span><span class="p">:</span> <span class="n">SqlParser</span> <span class="o">=</span> <span class="n">SqlParser</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
             <span class="n">sanitized_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span> <span class="o">=</span> <span class="n">sql_parser</span><span class="o">.</span><span class="n">parse_one</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
+            <span class="n">qep_analysis</span><span class="p">:</span> <span class="n">QEPAnalysis</span> <span class="o">=</span> <span class="n">QEPParser</span><span class="p">(</span><span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
             <span class="n">analysis_result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="c1"># Comparing different domains</span>
@@ -191,6 +195,28 @@
 
             <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">analysis_result</span>
+
+            <span class="c1"># ORDER BY in subquery</span>
+            <span class="n">analysis_result</span> <span class="o">=</span> \
+                <span class="n">SubqueryOrderByChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">analysis_result</span>
+
+            <span class="c1"># SELECT in subquery</span>
+            <span class="n">analysis_result</span> <span class="o">=</span> \
+                <span class="n">SubquerySelectChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">sql_parser</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">analysis_result</span>
+
+            <span class="c1"># Implied expression</span>
+            <span class="n">analysis_result</span> <span class="o">=</span> \
+                <span class="n">ImpliedExpressionChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">analysis_result</span>
+
         <span class="k">return</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># No semantic errors found</span></div></div>
 </pre></div>
 
@@ -208,7 +234,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fbe595d7790>
+    <jinja2.runtime.BlockReference object at 0x7fc695623ac0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
