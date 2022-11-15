@@ -196,11 +196,10 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets all columns from all tables mentioned in parsed_sql.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">table_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_all_table_names</span><span class="p">(</span><span class="n">parsed_sql</span><span class="p">)</span>
+
         <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_root_node</span><span class="p">(</span><span class="n">parsed_sql</span><span class="p">)</span>
-        <span class="n">table_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_all_table_names</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-
         <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">table_names</span><span class="p">:</span>
             <span class="n">table_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
             <span class="n">columns</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">table_columns</span><span class="p">)</span>
@@ -240,8 +239,7 @@
         <span class="k">return</span> <span class="n">unique_table_names</span></div>
 
 <div class="viewcode-block" id="SqlParser.get_column_name_from_column_expression"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.SqlParser.get_column_name_from_column_expression">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_column_name_from_column_expression</span><span class="p">(</span>
-            <span class="n">column_expression</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_column_name_from_column_expression</span><span class="p">(</span><span class="n">column_expression</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the column name of column expression ast node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -259,9 +257,9 @@
 
         <span class="n">where_statements</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Where</span><span class="p">)</span>
 
-        <span class="n">toplevel_where_statements</span> <span class="o">=</span> \
-            <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">find_ancestor</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Where</span><span class="p">),</span>
-                        <span class="n">where_statements</span><span class="p">))</span>
+        <span class="n">toplevel_where_statements</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">find_ancestor</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Where</span><span class="p">),</span> <span class="n">where_statements</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">where_statement</span> <span class="ow">in</span> <span class="n">toplevel_where_statements</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">predicate</span> <span class="ow">in</span> <span class="n">where_statement</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Predicate</span><span class="p">):</span>
@@ -293,10 +291,11 @@
 <span class="sd">        query.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">statement</span> <span class="o">=</span>  \
-            <span class="s2">&quot;SELECT column_name &quot;</span> \
-            <span class="s2">&quot;FROM information_schema.columns &quot;</span> \
+        <span class="n">statement</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;SELECT column_name &quot;</span>
+            <span class="s2">&quot;FROM information_schema.columns &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;WHERE table_name = &#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39;;&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">column_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
@@ -306,15 +305,15 @@
 
         <span class="c1"># transforms 1-element tuples to just list of elements</span>
         <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">]</span>
-<span class="c1">#        print(f&quot;column_names: {column_names}&quot;)</span>
+        <span class="c1">#        print(f&quot;column_names: {column_names}&quot;)</span>
 
         <span class="k">return</span> <span class="n">column_names</span>
 
-    <span class="k">def</span> <span class="nf">_get_column_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> \
-            <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PostgreSQLDataType</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_get_column_types</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PostgreSQLDataType</span><span class="p">]:</span>
         <span class="c1"># sql adapted from: https://stackoverflow.com/a/20194807/13540518</span>
-        <span class="n">column_type_statement_prefix</span> <span class="o">=</span> \
-            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">column_type_statement_prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">SELECT</span>
 <span class="s2">    pg_catalog.format_type(a.atttypid, a.atttypmod) AS &quot;data_type&quot;</span>
 <span class="s2">FROM</span>
@@ -347,14 +346,15 @@
 
         <span class="c1"># transforms 1-element tuples to just list of elements</span>
         <span class="n">type_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">type_names</span><span class="p">]</span>
-<span class="c1">#        print(f&quot;type_names: {type_names}&quot;)</span>
+        <span class="c1">#        print(f&quot;type_names: {type_names}&quot;)</span>
 
         <span class="n">parseable_type_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from_internal_types</span><span class="p">(</span><span class="n">type_names</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">parseable_type_names</span>
 
     <span class="k">def</span> <span class="nf">_convert_from_internal_types</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">type_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PostgreSQLDataType</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">type_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PostgreSQLDataType</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Postgresql has internal type names such as: character or character(x).</span>
 <span class="sd">        sqlglot can only parse the types in the form they are declared (atleast</span>
@@ -363,11 +363,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">converted_types</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">character_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(?:character|char)\(\s*(\d+)\s*\)$&#39;</span><span class="p">)</span>
+        <span class="n">character_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:character|char)\(\s*(\d+)\s*\)$&quot;</span><span class="p">)</span>
         <span class="n">varchar_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s1">&#39;^(?:(?:character varying)|varchar)\(\s*(\d+)\s*\)$&#39;</span><span class="p">)</span>
+            <span class="sa">r</span><span class="s2">&quot;^(?:(?:character varying)|varchar)\(\s*(\d+)\s*\)$&quot;</span>
+        <span class="p">)</span>
         <span class="n">numeric_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s1">&#39;^(?:numeric|decimal)\s*\(\s*(\d+)(?:\s*,\s*(\d+))?\s*\)$&#39;</span><span class="p">)</span>
+            <span class="sa">r</span><span class="s2">&quot;^(?:numeric|decimal)\s*\(\s*(\d+)(?:\s*,\s*(\d+))?\s*\)$&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">type_name</span> <span class="ow">in</span> <span class="n">type_names</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;integer&quot;</span><span class="p">:</span>
@@ -377,35 +379,44 @@
             <span class="k">elif</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span>
                 <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;CHAR&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">character_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
-                <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CHAR(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-                                               <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;CHAR(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span>
+                <span class="p">)</span>
                 <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv_type</span><span class="p">)</span>
 
             <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">varchar_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
-                <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;VARCHAR(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-                                               <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;VARCHAR(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span>
+                <span class="p">)</span>
                 <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv_type</span><span class="p">)</span>
 
             <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">numeric_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
                 <span class="n">num_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
                 <span class="k">if</span> <span class="n">num_groups</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">conv_type</span> <span class="o">=</span> \
-                        <span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NUMERIC(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-                                           <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;NUMERIC(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span>
+                    <span class="p">)</span>
                     <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv_type</span><span class="p">)</span>
 
                 <span class="k">elif</span> <span class="n">num_groups</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;NUMERIC(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
-                    <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span>
-                                                   <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span>
+                    <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
+                        <span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+                    <span class="p">)</span>
                     <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv_type</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># TODO: proper error handling</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unrecognized number &#39;</span><span class="si">{</span><span class="n">num_groups</span><span class="si">}</span><span class="s2">&#39; of arguments for numeric() column type&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;unrecognized number &#39;</span><span class="si">{</span><span class="n">num_groups</span><span class="si">}</span><span class="s2">&#39; of arguments for numeric() column type&quot;</span><span class="p">,</span>
+                        <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># TODO: proper error handling</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unable to convert from internal type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39; to declared type&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to convert from internal type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39; to declared type&quot;</span><span class="p">,</span>
+                    <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+                <span class="p">)</span>
                 <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">converted_types</span></div>
@@ -425,7 +436,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fc6962dc6d0>
+    <jinja2.runtime.BlockReference object at 0x7ff4ece9f700>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
