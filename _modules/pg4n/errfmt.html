@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pg4n.sum_distinct_checker &mdash; PostgreSQL for novices  documentation</title>
+  <title>pg4n.errfmt &mdash; PostgreSQL for novices  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -143,7 +143,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>pg4n.sum_distinct_checker</li>
+      <li>pg4n.errfmt</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -152,44 +152,30 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for pg4n.sum_distinct_checker</h1><div class="highlight"><pre>
+  <h1>Source code for pg4n.errfmt</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">sqlglot.expressions</span> <span class="k">as</span> <span class="nn">exp</span>
 
-<span class="kn">from</span> <span class="nn">.qepparser</span> <span class="kn">import</span> <span class="n">QEPAnalysis</span>
-<span class="kn">from</span> <span class="nn">.errfmt</span> <span class="kn">import</span> <span class="n">ErrorFormatter</span>
+<div class="viewcode-block" id="ErrorFormatter"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.errfmt.ErrorFormatter">[docs]</a><span class="k">class</span> <span class="nc">ErrorFormatter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">warning_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">warning_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">underlined_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warning_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">warning_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warning_msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">warning_msg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">underlined_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">underlined_query</span>
 
-
-<div class="viewcode-block" id="SumDistinctChecker"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker">[docs]</a><span class="k">class</span> <span class="nc">SumDistinctChecker</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">,</span> <span class="n">qep_analysis</span><span class="p">:</span> <span class="n">QEPAnalysis</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span> <span class="o">=</span> <span class="n">parsed_sql</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">qep_analysis</span> <span class="o">=</span> <span class="n">qep_analysis</span>
-
-<div class="viewcode-block" id="SumDistinctChecker.check"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="ErrorFormatter.format"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.errfmt.ErrorFormatter.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns warning message if the sql has SUM/AVG(DISTINCT ...),</span>
-<span class="sd">        otherwise None</span>
+<span class="sd">        Returns a formatted error message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">sums</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Sum</span><span class="p">)</span>
-        <span class="n">avgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Avg</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">has_distinct</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">this</span><span class="p">)</span> <span class="o">==</span> <span class="n">exp</span><span class="o">.</span><span class="n">Distinct</span>
-
-        <span class="n">has_sum_distinct</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">has_distinct</span><span class="p">,</span> <span class="n">sums</span><span class="p">))</span>
-        <span class="n">has_avg_distinct</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">has_distinct</span><span class="p">,</span> <span class="n">avgs</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">has_sum_distinct</span> <span class="ow">or</span> <span class="n">has_avg_distinct</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="n">warning</span> <span class="o">=</span> <span class="s2">&quot;DISTINCT in SUM or AVG&quot;</span>
-        <span class="n">warning_name</span> <span class="o">=</span> <span class="s2">&quot;SumDistinct&quot;</span>
-        <span class="n">formatter</span> <span class="o">=</span> <span class="n">ErrorFormatter</span><span class="p">(</span><span class="n">warning</span><span class="p">,</span> <span class="n">warning_name</span><span class="p">)</span>
-        <span class="n">warning_msg</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">format</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">warning_msg</span></div></div>
+        <span class="n">base_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">warning_msg</span><span class="si">}</span><span class="s2"> [pg4n::</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">warning_name</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">underlined_query</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">base_msg</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlined_query</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">base_msg</span></div></div>
 </pre></div>
 
            </div>
@@ -206,7 +192,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fa2b3144ca0>
+    <jinja2.runtime.BlockReference object at 0x7fa2b2418f70>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

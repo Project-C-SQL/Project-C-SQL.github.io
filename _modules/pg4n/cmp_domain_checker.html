@@ -63,6 +63,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.eq_wildcard_checker.EqWildcardChecker"><code class="docutils literal notranslate"><span class="pre">EqWildcardChecker</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.errfmt">pg4n.errfmt module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.errfmt.ErrorFormatter"><code class="docutils literal notranslate"><span class="pre">ErrorFormatter</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.implied_expression_checker">pg4n.implied_expression_checker module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker"><code class="docutils literal notranslate"><span class="pre">ImpliedExpressionChecker</span></code></a></li>
 </ul>
@@ -157,6 +161,7 @@
 
 <span class="kn">from</span> <span class="nn">.sqlparser</span> <span class="kn">import</span> <span class="n">SqlParser</span>
 <span class="kn">from</span> <span class="nn">.sqlparser</span> <span class="kn">import</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">.errfmt</span> <span class="kn">import</span> <span class="n">ErrorFormatter</span>
 
 
 <span class="n">VT100_UNDERLINE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[4m&quot;</span>
@@ -297,7 +302,8 @@
 
             <span class="n">domain1</span> <span class="o">=</span> <span class="n">suspicious_cmp_context</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span>
             <span class="n">domain2</span> <span class="o">=</span> <span class="n">suspicious_cmp_context</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span>
-            <span class="n">msg_header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Warning: Comparison between different domains (</span><span class="si">{</span><span class="n">domain1</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">domain2</span><span class="si">}</span><span class="s2">) [pg4n::CmpDomains]</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">warning</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Comparison between different domains (</span><span class="si">{</span><span class="n">domain1</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">domain2</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="n">warning_name</span> <span class="o">=</span> <span class="s2">&quot;CmpDomains&quot;</span>
 
             <span class="n">cmp_exp</span> <span class="o">=</span> <span class="n">suspicious_cmp_context</span><span class="o">.</span><span class="n">expression</span>
 
@@ -321,7 +327,8 @@
                 <span class="n">VT100_RESET</span> <span class="o">+</span> \
                 <span class="n">whole_statement</span><span class="p">[</span><span class="n">total_end_offset</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">whole_statement</span><span class="p">)]</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">warning_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">warning_msg</span> <span class="o">+</span> <span class="n">msg_header</span> <span class="o">+</span> <span class="n">underlined_query</span>
+            <span class="n">formatter</span> <span class="o">=</span> <span class="n">ErrorFormatter</span><span class="p">(</span><span class="n">warning</span><span class="p">,</span> <span class="n">warning_name</span><span class="p">,</span> <span class="n">underlined_query</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning_msg</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">format</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">suspicious_cmp_contexts</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">warning_msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
 
@@ -353,7 +360,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fb7544802b0>
+    <jinja2.runtime.BlockReference object at 0x7fa2b2511ba0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

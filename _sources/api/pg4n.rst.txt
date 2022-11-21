@@ -20,6 +20,14 @@ pg4n.eq\_wildcard\_checker module
    :undoc-members:
    :show-inheritance:
 
+pg4n.errfmt module
+------------------
+
+.. automodule:: pg4n.errfmt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pg4n.implied\_expression\_checker module
 ----------------------------------------
 
