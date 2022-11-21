@@ -97,6 +97,10 @@
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.sqlparser.SqlParser"><code class="docutils literal notranslate"><span class="pre">SqlParser</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.strange_having_checker">pg4n.strange_having_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker"><code class="docutils literal notranslate"><span class="pre">StrangeHavingChecker</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.subquery_orderby_checker">pg4n.subquery_orderby_checker module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
 </ul>
@@ -104,6 +108,10 @@
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.subquery_select_checker">pg4n.subquery_select_checker module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectChecker"><code class="docutils literal notranslate"><span class="pre">SubquerySelectChecker</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectContext"><code class="docutils literal notranslate"><span class="pre">SubquerySelectContext</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.sum_distinct_checker">pg4n.sum_distinct_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker"><code class="docutils literal notranslate"><span class="pre">SumDistinctChecker</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.util">pg4n.util module</a></li>
@@ -181,9 +189,13 @@
       <ul>
         <li><a href="api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker.check">(pg4n.implied_expression_checker.ImpliedExpressionChecker method)</a>
 </li>
+        <li><a href="api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker.check">(pg4n.strange_having_checker.StrangeHavingChecker method)</a>
+</li>
         <li><a href="api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker.check">(pg4n.subquery_orderby_checker.SubqueryOrderByChecker method)</a>
 </li>
         <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectChecker.check">(pg4n.subquery_select_checker.SubquerySelectChecker method)</a>
+</li>
+        <li><a href="api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker.check">(pg4n.sum_distinct_checker.SumDistinctChecker method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -312,9 +324,13 @@
 </li>
         <li><a href="api/pg4n.html#module-pg4n.sqlparser">pg4n.sqlparser</a>
 </li>
+        <li><a href="api/pg4n.html#module-pg4n.strange_having_checker">pg4n.strange_having_checker</a>
+</li>
         <li><a href="api/pg4n.html#module-pg4n.subquery_orderby_checker">pg4n.subquery_orderby_checker</a>
 </li>
         <li><a href="api/pg4n.html#module-pg4n.subquery_select_checker">pg4n.subquery_select_checker</a>
+</li>
+        <li><a href="api/pg4n.html#module-pg4n.sum_distinct_checker">pg4n.sum_distinct_checker</a>
 </li>
         <li><a href="api/pg4n.html#module-pg4n.util">pg4n.util</a>
 </li>
@@ -416,8 +432,6 @@
         <li><a href="api/pg4n.html#module-pg4n.psqlwrapper">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pg4n.qepparser
 
@@ -425,6 +439,8 @@
         <li><a href="api/pg4n.html#module-pg4n.qepparser">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pg4n.semanticrouter
 
@@ -440,6 +456,13 @@
 </li>
       </ul></li>
       <li>
+    pg4n.strange_having_checker
+
+      <ul>
+        <li><a href="api/pg4n.html#module-pg4n.strange_having_checker">module</a>
+</li>
+      </ul></li>
+      <li>
     pg4n.subquery_orderby_checker
 
       <ul>
@@ -451,6 +474,13 @@
 
       <ul>
         <li><a href="api/pg4n.html#module-pg4n.subquery_select_checker">module</a>
+</li>
+      </ul></li>
+      <li>
+    pg4n.sum_distinct_checker
+
+      <ul>
+        <li><a href="api/pg4n.html#module-pg4n.sum_distinct_checker">module</a>
 </li>
       </ul></li>
       <li>
@@ -530,9 +560,11 @@
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.stmt_chars">stmt_chars (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
+      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.stmt_end">stmt_end (pg4n.psqlparser.PsqlParser attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.stmt_end">stmt_end (pg4n.psqlparser.PsqlParser attribute)</a>
+      <li><a href="api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker">StrangeHavingChecker (class in pg4n.strange_having_checker)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectContext.subquery">subquery (pg4n.subquery_select_checker.SubquerySelectContext attribute)</a>
 </li>
@@ -541,6 +573,8 @@
       <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectChecker">SubquerySelectChecker (class in pg4n.subquery_select_checker)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectContext">SubquerySelectContext (class in pg4n.subquery_select_checker)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker">SumDistinctChecker (class in pg4n.sum_distinct_checker)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -601,7 +635,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7ff4ece74c40>
+    <jinja2.runtime.BlockReference object at 0x7f65a02da020>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
