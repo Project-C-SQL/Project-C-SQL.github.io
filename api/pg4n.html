@@ -61,6 +61,18 @@
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.cmp_domain_checker.CmpDomainChecker"><code class="docutils literal notranslate"><span class="pre">CmpDomainChecker</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.config_parser">pg4n.config_parser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.config_parser.ConfigParser"><code class="docutils literal notranslate"><span class="pre">ConfigParser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.config_reader">pg4n.config_reader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.config_reader.ConfigReader"><code class="docutils literal notranslate"><span class="pre">ConfigReader</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.config_values">pg4n.config_values module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.config_values.ConfigValues"><code class="docutils literal notranslate"><span class="pre">ConfigValues</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pg4n.eq_wildcard_checker">pg4n.eq_wildcard_checker module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.eq_wildcard_checker.EqWildcardChecker"><code class="docutils literal notranslate"><span class="pre">EqWildcardChecker</span></code></a></li>
 </ul>
@@ -198,6 +210,78 @@ Returns a warning message if something was found, otherwise None.</p>
 </dd>
 </dl>
 </dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pg4n.config_parser">
+<span id="pg4n-config-parser-module"></span><h2>pg4n.config_parser module<a class="headerlink" href="#module-pg4n.config_parser" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.config_parser.ConfigParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.config_parser.</span></span><span class="sig-name descname"><span class="pre">ConfigParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/config_parser.html#ConfigParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.config_parser.ConfigParser" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.config_parser.ConfigParser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/config_parser.html#ConfigParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.config_parser.ConfigParser.parse" title="Permalink to this definition"></a></dt>
+<dd><p>Reads config values from file givein in __init__.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#pg4n.config_values.ConfigValues" title="pg4n.config_values.ConfigValues"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigValues</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pg4n.config_reader">
+<span id="pg4n-config-reader-module"></span><h2>pg4n.config_reader module<a class="headerlink" href="#module-pg4n.config_reader" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.config_reader.ConfigReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.config_reader.</span></span><span class="sig-name descname"><span class="pre">ConfigReader</span></span><a class="reference internal" href="../_modules/pg4n/config_reader.html#ConfigReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.config_reader.ConfigReader" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.config_reader.ConfigReader.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/config_reader.html#ConfigReader.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.config_reader.ConfigReader.read" title="Permalink to this definition"></a></dt>
+<dd><p>The configuration files are read in order from:
+/etc/pg4n/config, $XDG_CONFIG_HOME/pg4n/config, or if
+$XDG_CONFIG_HOME is not set, from $HOME/.config/pg4n/config,
+each new value introduced in latter files overriding the previous value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#pg4n.config_values.ConfigValues" title="pg4n.config_values.ConfigValues"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigValues</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pg4n.config_values">
+<span id="pg4n-config-values-module"></span><h2>pg4n.config_values module<a class="headerlink" href="#module-pg4n.config_values" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.config_values.ConfigValues">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.config_values.</span></span><span class="sig-name descname"><span class="pre">ConfigValues</span></span><a class="reference internal" href="../_modules/pg4n/config_values.html#ConfigValues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.config_values.ConfigValues" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.config_values.ConfigValues.CmpDomains">
+<span class="sig-name descname"><span class="pre">CmpDomains</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pg4n.config_values.ConfigValues.CmpDomains" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.config_values.ConfigValues.ImpliedExpression">
+<span class="sig-name descname"><span class="pre">ImpliedExpression</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pg4n.config_values.ConfigValues.ImpliedExpression" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.config_values.ConfigValues.InnerOrderBy">
+<span class="sig-name descname"><span class="pre">InnerOrderBy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pg4n.config_values.ConfigValues.InnerOrderBy" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.config_values.ConfigValues.SubquerySelect">
+<span class="sig-name descname"><span class="pre">SubquerySelect</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pg4n.config_values.ConfigValues.SubquerySelect" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1012,7 +1096,7 @@ otherwise None</p>
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f3f37c7df60>
+    <jinja2.runtime.BlockReference object at 0x7f3da4ac4280>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

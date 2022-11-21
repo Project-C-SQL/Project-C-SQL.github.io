@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pg4n.main &mdash; PostgreSQL for novices  documentation</title>
+  <title>pg4n.config_values &mdash; PostgreSQL for novices  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -155,7 +155,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>pg4n.main</li>
+      <li>pg4n.config_values</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -164,33 +164,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for pg4n.main</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.main.main">[docs]</a><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">os</span>
-    <span class="kn">import</span> <span class="nn">sys</span>
-    <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
-
-    <span class="kn">from</span> <span class="nn">.psqlconninfo</span> <span class="kn">import</span> <span class="n">PsqlConnInfo</span>
-    <span class="kn">from</span> <span class="nn">.semanticrouter</span> <span class="kn">import</span> <span class="n">SemanticRouter</span>
-    <span class="kn">from</span> <span class="nn">.psqlparser</span> <span class="kn">import</span> <span class="n">PsqlParser</span>
-    <span class="kn">from</span> <span class="nn">.psqlwrapper</span> <span class="kn">import</span> <span class="n">PsqlWrapper</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">conn_info</span> <span class="o">=</span> <span class="n">PsqlConnInfo</span><span class="p">(</span>
-            <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># concat arguments</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="n">sem_router</span> <span class="o">=</span> <span class="n">SemanticRouter</span><span class="p">(</span><span class="o">*</span><span class="n">conn_info</span><span class="p">)</span>  <span class="c1"># asterisk unpacks the 5-tuple</span>
-        <span class="n">psql</span> <span class="o">=</span> <span class="n">PsqlWrapper</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
-                           <span class="n">sem_router</span><span class="o">.</span><span class="n">run_analysis</span><span class="p">,</span>
-                           <span class="n">PsqlParser</span><span class="p">())</span>
-        <span class="n">psql</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">                main.py [psql arguments] &lt;database name&gt;&quot;</span><span class="p">)</span></div>
+  <h1>Source code for pg4n.config_values</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypedDict</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+<span class="c1"># Contains all the key-value pairs meaningful in a config file.</span>
+<div class="viewcode-block" id="ConfigValues"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.config_values.ConfigValues">[docs]</a><span class="k">class</span> <span class="nc">ConfigValues</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">ImpliedExpression</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">CmpDomains</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">InnerOrderBy</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">SubquerySelect</span><span class="p">:</span> <span class="nb">bool</span></div>
 </pre></div>
 
            </div>
@@ -207,7 +190,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f3da5162200>
+    <jinja2.runtime.BlockReference object at 0x7f3da4961d50>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

@@ -12,6 +12,30 @@ pg4n.cmp\_domain\_checker module
    :undoc-members:
    :show-inheritance:
 
+pg4n.config\_parser module
+--------------------------
+
+.. automodule:: pg4n.config_parser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.config\_reader module
+--------------------------
+
+.. automodule:: pg4n.config_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pg4n.config\_values module
+--------------------------
+
+.. automodule:: pg4n.config_values
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pg4n.eq\_wildcard\_checker module
 ---------------------------------
 

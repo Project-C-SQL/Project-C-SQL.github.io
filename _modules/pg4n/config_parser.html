@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pg4n.config_parser &mdash; PostgreSQL for novices  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> PostgreSQL for novices
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../interfaces.html">Interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../interfaces.html#psqlwrapper">PsqlWrapper</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../interfaces.html#wrapper-db-name-str-hook-f-callable-str-str-parser-psqlparser"><code class="docutils literal notranslate"><span class="pre">Wrapper(db_name:</span> <span class="pre">str,</span> <span class="pre">hook_f:</span> <span class="pre">Callable[str,</span> <span class="pre">str],</span> <span class="pre">parser:</span> <span class="pre">PsqlParser)</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../interfaces.html#psqlparser">PsqlParser</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../interfaces.html#parse-for-a-new-prompt-psql-str-list-str"><code class="docutils literal notranslate"><span class="pre">parse_for_a_new_prompt(psql:</span> <span class="pre">str)</span> <span class="pre">-&gt;</span> <span class="pre">List[str]</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../interfaces.html#parse-first-found-stmt-psql-str-list-str"><code class="docutils literal notranslate"><span class="pre">parse_first_found_stmt(psql:str)</span> <span class="pre">-&gt;</span> <span class="pre">List[str]</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../program-architecture.html">Program architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/pg4n.html">pg4n package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.cmp_domain_checker">pg4n.cmp_domain_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.cmp_domain_checker.CmpContext"><code class="docutils literal notranslate"><span class="pre">CmpContext</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.cmp_domain_checker.CmpDomainChecker"><code class="docutils literal notranslate"><span class="pre">CmpDomainChecker</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.config_parser">pg4n.config_parser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.config_parser.ConfigParser"><code class="docutils literal notranslate"><span class="pre">ConfigParser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.config_reader">pg4n.config_reader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.config_reader.ConfigReader"><code class="docutils literal notranslate"><span class="pre">ConfigReader</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.config_values">pg4n.config_values module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.config_values.ConfigValues"><code class="docutils literal notranslate"><span class="pre">ConfigValues</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.eq_wildcard_checker">pg4n.eq_wildcard_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.eq_wildcard_checker.EqWildcardChecker"><code class="docutils literal notranslate"><span class="pre">EqWildcardChecker</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.errfmt">pg4n.errfmt module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.errfmt.ErrorFormatter"><code class="docutils literal notranslate"><span class="pre">ErrorFormatter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.implied_expression_checker">pg4n.implied_expression_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker"><code class="docutils literal notranslate"><span class="pre">ImpliedExpressionChecker</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.main">pg4n.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.psqlconninfo">pg4n.psqlconninfo module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo"><code class="docutils literal notranslate"><span class="pre">PsqlConnInfo</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.psqlparser">pg4n.psqlparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.psqlparser.PsqlParser"><code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.psqlwrapper">pg4n.psqlwrapper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper"><code class="docutils literal notranslate"><span class="pre">PsqlWrapper</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.qepparser">pg4n.qepparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.qepparser.QEPAnalysis"><code class="docutils literal notranslate"><span class="pre">QEPAnalysis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.qepparser.QEPNode"><code class="docutils literal notranslate"><span class="pre">QEPNode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.qepparser.QEPParser"><code class="docutils literal notranslate"><span class="pre">QEPParser</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.qepparser.node"><code class="docutils literal notranslate"><span class="pre">node</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.qepparser.qep"><code class="docutils literal notranslate"><span class="pre">qep</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.semanticrouter">pg4n.semanticrouter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.semanticrouter.SemanticRouter"><code class="docutils literal notranslate"><span class="pre">SemanticRouter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.sqlparser">pg4n.sqlparser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.sqlparser.Column"><code class="docutils literal notranslate"><span class="pre">Column</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.sqlparser.PostgreSQLDataType"><code class="docutils literal notranslate"><span class="pre">PostgreSQLDataType</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.sqlparser.SqlParser"><code class="docutils literal notranslate"><span class="pre">SqlParser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.strange_having_checker">pg4n.strange_having_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker"><code class="docutils literal notranslate"><span class="pre">StrangeHavingChecker</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.subquery_orderby_checker">pg4n.subquery_orderby_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.subquery_select_checker">pg4n.subquery_select_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectChecker"><code class="docutils literal notranslate"><span class="pre">SubquerySelectChecker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectContext"><code class="docutils literal notranslate"><span class="pre">SubquerySelectContext</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.sum_distinct_checker">pg4n.sum_distinct_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker"><code class="docutils literal notranslate"><span class="pre">SumDistinctChecker</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.util">pg4n.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PostgreSQL for novices</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>pg4n.config_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pg4n.config_parser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TextIO</span>
+
+<span class="kn">from</span> <span class="nn">.config_values</span> <span class="kn">import</span> <span class="n">ConfigValues</span>
+
+
+<div class="viewcode-block" id="ConfigParser"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.config_parser.ConfigParser">[docs]</a><span class="k">class</span> <span class="nc">ConfigParser</span><span class="p">:</span>
+    <span class="n">_option_matcher</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s2">&quot;\s*(?P&lt;optname&gt;\w+)\s+(?P&lt;optval&gt;1|0|true|false|yes|no)\s*$&quot;</span><span class="p">,</span>
+        <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">_empty_line_matcher</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*$&quot;</span><span class="p">)</span>
+    <span class="n">_comment_matcher</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*#+.*$&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">TextIO</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">:</span> <span class="n">TextIO</span> <span class="o">=</span> <span class="n">file</span>
+
+<div class="viewcode-block" id="ConfigParser.parse"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.config_parser.ConfigParser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConfigValues</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads config values from file givein in __init__.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">optnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ConfigValues</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">config_values</span><span class="p">:</span> <span class="n">ConfigValues</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Needed for bytes containing files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># The following stuff is for improved error messages</span>
+        <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">class</span> <span class="nc">SeenOptionContext</span><span class="p">:</span>
+            <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="n">line</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="n">line_number</span><span class="p">:</span> <span class="nb">int</span>
+
+        <span class="n">seen_option_contexts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SeenOptionContext</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">multiply_defined_options</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">line_number</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()):</span>
+            <span class="c1"># To make this work with bytes objects like TemporaryFile contents</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="n">_empty_line_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="n">_comment_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="n">_option_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="n">optname</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;optname&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">optname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">optnames</span><span class="p">:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from_anycase_to_propercase</span><span class="p">(</span><span class="n">optname</span><span class="p">)</span>
+                    <span class="n">config_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optval_to_bool</span><span class="p">(</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;optval&quot;</span><span class="p">))</span>
+                    <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">key</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">seen_option_contexts</span><span class="p">]:</span>
+                        <span class="n">seen_option_contexts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">SeenOptionContext</span><span class="p">(</span>
+                                <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">line_number</span><span class="o">=</span><span class="n">line_number</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">multiply_defined_options</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">seen_option_contexts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">SeenOptionContext</span><span class="p">(</span>
+                                <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">line_number</span><span class="o">=</span><span class="n">line_number</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">output_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;warning: bad warning name or value in line </span><span class="si">{</span><span class="n">line_number</span><span class="si">}</span><span class="s2">: &#39;</span><span class="si">{</span><span class="n">output_line</span><span class="si">}</span><span class="s2">&#39; in configuration file: &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                        <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;warning: unable to parse line </span><span class="si">{</span><span class="n">line_number</span><span class="si">}</span><span class="s2">: &#39;</span><span class="si">{</span><span class="n">output_line</span><span class="si">}</span><span class="s2">&#39; in configuration file: &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                    <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Not so brilliant computational complexity</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">multiply_defined_options</span><span class="p">:</span>
+            <span class="n">seen_option_lines</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">ctx</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span><span class="p">,</span> <span class="n">seen_option_contexts</span><span class="p">):</span>
+                <span class="n">seen_option_lines</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;line </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">line_number</span><span class="si">}</span><span class="s2">: &#39;</span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">line</span><span class="si">}</span><span class="s2">&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;warning: option &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; is set multiple times</span><span class="se">\n</span><span class="si">{</span><span class="n">seen_option_lines</span><span class="si">}</span><span class="s2">in configuration file: &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+                <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">config_values</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">config_values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">_optval_to_bool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optval</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Excepts only valid option values.</span>
+<span class="sd">        Converts config file option value string into bool.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">true_values</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+        <span class="n">false_values</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;false&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">optval</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">true_values</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">optval</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">false_values</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_convert_from_anycase_to_propercase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anycase_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assumes that anycase_key matches some option name case-insensitively.</span>
+
+<span class="sd">        Users can write option values case-insensitively. We still need to</span>
+<span class="sd">        convert that user written value to the proper one that matches the</span>
+<span class="sd">        fields in ConfigValues class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fields</span> <span class="o">=</span> <span class="n">ConfigValues</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">anycase_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">field</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">field</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Heikkilä et al.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+    <jinja2.runtime.BlockReference object at 0x7f3da5130910>
+    <div class="footer" style="float:right">
+        <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
+          <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
+        </a>
+      </div>
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
