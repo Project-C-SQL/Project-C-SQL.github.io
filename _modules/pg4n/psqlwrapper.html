@@ -159,6 +159,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">import</span> <span class="nn">pexpect</span>
 <span class="kn">from</span> <span class="nn">pyte</span> <span class="kn">import</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">Screen</span>
 <span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">get_terminal_size</span>
@@ -174,8 +175,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">supported_psql_versions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;14.5&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_name_parameter</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psql_args</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
                  <span class="n">hook_f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span> <span class="n">parser</span><span class="p">:</span> <span class="n">PsqlParser</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Build wrapper for selected database.</span>
 
@@ -184,7 +186,7 @@
 <span class="sd">        to and from which semantic error messages are received in return.</span>
 <span class="sd">        :param parser: A parser that implements the required parsing functions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db_name</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">db_name_parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">psql_args</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">psql_args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">analyze</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook_f</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">:</span> <span class="n">PsqlParser</span> <span class="o">=</span> <span class="n">parser</span>
 
@@ -202,12 +204,32 @@
 <div class="viewcode-block" id="PsqlWrapper.start"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Start psql process and then start feeding hook function with \</span>
 <span class="sd">        intercepted output.&quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="s2">&quot;psql &quot;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_name</span><span class="p">),</span>
+
+        <span class="n">version_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_psql_version</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">version_msg</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">version_msg</span><span class="p">)</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="s2">&quot;psql &quot;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psql_args</span><span class="p">),</span>
                           <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
                           <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">))</span>
 
         <span class="n">c</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">input_filter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ifilter</span><span class="p">,</span>
                    <span class="n">output_filter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ofilter</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PsqlWrapper.check_psql_version"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.check_psql_version">[docs]</a>    <span class="k">def</span> <span class="nf">check_psql_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">version_info</span> <span class="o">=</span> \
+            <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="s2">&quot;psql &quot;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psql_args</span><span class="p">)</span> <span class="o">+</span>
+                          <span class="s2">&quot; --version&quot;</span><span class="p">)</span>
+        <span class="n">version_info</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">pexpect</span><span class="o">.</span><span class="n">EOF</span><span class="p">)</span>
+        <span class="n">version_info_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">version_info</span><span class="o">.</span><span class="n">before</span><span class="p">)</span>
+        <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_psql_version</span><span class="p">(</span><span class="n">version_info_str</span><span class="p">)</span>
+        <span class="n">version_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">version</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_psql_versions</span>
+        <span class="k">if</span> <span class="n">version_ok</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Pg4n has only been tested on psql versions &quot;</span> <span class="o">+</span> \
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">supported_psql_versions</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span></div>
+        
 
 <div class="viewcode-block" id="PsqlWrapper.ifilter"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.ifilter">[docs]</a>    <span class="k">def</span> <span class="nf">ifilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;User input filter function for pexpect.interact: not used.</span>
@@ -305,7 +327,7 @@
         <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="c1"># complicated case: user has ctrl-R&#39;d, copy-pasted command or something,</span>
+        <span class="c1"># complicated case: user has ctrl-R&#39;d, copypasted command or something.</span>
         <span class="c1"># and the \r\n is somewhere in midst of output..</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_magical_return</span><span class="p">(</span>
                 <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="p">[]:</span>
@@ -327,7 +349,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fa2b2bcb100>
+    <jinja2.runtime.BlockReference object at 0x7f3f378f4b20>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

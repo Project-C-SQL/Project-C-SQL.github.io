@@ -212,6 +212,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output">check_and_act_on_repl_output() (pg4n.psqlwrapper.PsqlWrapper method)</a>
 </li>
+      <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.check_psql_version">check_psql_version() (pg4n.psqlwrapper.PsqlWrapper method)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.cmp_domain_checker.CmpContext">CmpContext (class in pg4n.cmp_domain_checker)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.cmp_domain_checker.CmpDomainChecker">CmpDomainChecker (class in pg4n.cmp_domain_checker)</a>
@@ -302,21 +304,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.main.main">main() (in module pg4n.main)</a>
 </li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_error">match_error (pg4n.psqlparser.PsqlParser attribute)</a>
-</li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_prompt">match_prompt (pg4n.psqlparser.PsqlParser attribute)</a>
+      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_rev_any_sql_stmt">match_rev_any_sql_stmt (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_rev_magical_returns">match_rev_magical_returns (pg4n.psqlparser.PsqlParser attribute)</a>
-</li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_rev_sql_stmt_start">match_rev_sql_stmt_start (pg4n.psqlparser.PsqlParser attribute)</a>
-</li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_sql_stmt">match_sql_stmt (pg4n.psqlparser.PsqlParser attribute)</a>
-</li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_sql_stmt_end">match_sql_stmt_end (pg4n.psqlparser.PsqlParser attribute)</a>
-</li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_sql_stmt_start">match_sql_stmt_start (pg4n.psqlparser.PsqlParser attribute)</a>
-</li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.match_whole_rev_sql_stmt">match_whole_rev_sql_stmt (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
       <li>
     module
@@ -403,7 +393,7 @@
 </li>
       <li><a href="api/pg4n.html#pg4n.sqlparser.SqlParser.parse_one">parse_one() (pg4n.sqlparser.SqlParser method)</a>
 </li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.parse_sql_stmt">parse_sql_stmt (pg4n.psqlparser.PsqlParser attribute)</a>
+      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.parse_psql_version">parse_psql_version() (pg4n.psqlparser.PsqlParser method)</a>
 </li>
       <li>
     pg4n
@@ -598,10 +588,10 @@
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.stmt_end">stmt_end (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker">StrangeHavingChecker (class in pg4n.strange_having_checker)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectContext.subquery">subquery (pg4n.subquery_select_checker.SubquerySelectContext attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker">SubqueryOrderByChecker (class in pg4n.subquery_orderby_checker)</a>
@@ -611,6 +601,8 @@
       <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectContext">SubquerySelectContext (class in pg4n.subquery_select_checker)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker">SumDistinctChecker (class in pg4n.sum_distinct_checker)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.supported_psql_versions">supported_psql_versions (pg4n.psqlwrapper.PsqlWrapper attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -630,21 +622,15 @@
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_database">tok_pre_database (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_host">tok_pre_host (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_port">tok_pre_port (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.tok_pre_user">tok_pre_user (pg4n.psqlconninfo.PsqlConnInfo attribute)</a>
 </li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_prompt">tok_prompt (pg4n.psqlparser.PsqlParser attribute)</a>
-</li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_prompt_linebreak">tok_prompt_linebreak (pg4n.psqlparser.PsqlParser attribute)</a>
-</li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_rev_prompt">tok_rev_prompt (pg4n.psqlparser.PsqlParser attribute)</a>
-</li>
-      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_rev_prompt_linebreak">tok_rev_prompt_linebreak (pg4n.psqlparser.PsqlParser attribute)</a>
+      <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_rev_prompt_end">tok_rev_prompt_end (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.tok_stmt_end">tok_stmt_end (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
@@ -671,7 +657,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fa2b27fb910>
+    <jinja2.runtime.BlockReference object at 0x7f3f37c36ad0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
