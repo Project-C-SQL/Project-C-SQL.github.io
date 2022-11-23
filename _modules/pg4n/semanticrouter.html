@@ -174,9 +174,13 @@
 
 <span class="c1"># analysis modules</span>
 <span class="kn">from</span> <span class="nn">.cmp_domain_checker</span> <span class="kn">import</span> <span class="n">CmpDomainChecker</span>
+<span class="kn">from</span> <span class="nn">.eq_wildcard_checker</span> <span class="kn">import</span> <span class="n">EqWildcardChecker</span>
+<span class="kn">from</span> <span class="nn">.implied_expression_checker</span> <span class="kn">import</span> <span class="n">ImpliedExpressionChecker</span>
+<span class="kn">from</span> <span class="nn">.strange_having_checker</span> <span class="kn">import</span> <span class="n">StrangeHavingChecker</span>
 <span class="kn">from</span> <span class="nn">.subquery_orderby_checker</span> <span class="kn">import</span> <span class="n">SubqueryOrderByChecker</span>
 <span class="kn">from</span> <span class="nn">.subquery_select_checker</span> <span class="kn">import</span> <span class="n">SubquerySelectChecker</span>
-<span class="kn">from</span> <span class="nn">.implied_expression_checker</span> <span class="kn">import</span> <span class="n">ImpliedExpressionChecker</span>
+<span class="kn">from</span> <span class="nn">.sum_distinct_checker</span> <span class="kn">import</span> <span class="n">SumDistinctChecker</span>
+
 
 <div class="viewcode-block" id="SemanticRouter"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.semanticrouter.SemanticRouter">[docs]</a><span class="k">class</span> <span class="nc">SemanticRouter</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Analyze given SQL queries via a plethora of analysis modules.&quot;&quot;&quot;</span>
@@ -240,8 +244,30 @@
 
             <span class="c1"># Implied expression</span>
             <span class="n">analysis_result</span> <span class="o">=</span> \
-                <span class="n">ImpliedExpressionChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
-            
+                <span class="n">ImpliedExpressionChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">,</span>
+                                         <span class="n">conn</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">analysis_result</span>
+
+            <span class="c1"># Strange HAVING clause without GROUP BY</span>
+            <span class="n">analysis_result</span> <span class="o">=</span> \
+                <span class="n">StrangeHavingChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">analysis_result</span>
+
+            <span class="c1"># SUM/AVG(DISTINCT)</span>
+            <span class="n">analysis_result</span> <span class="o">=</span> \
+                <span class="n">SumDistinctChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">analysis_result</span>
+
+            <span class="c1"># Wildcards without LIKE</span>
+            <span class="n">analysis_result</span> <span class="o">=</span> \
+                <span class="n">EqWildcardChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+
             <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">analysis_result</span>
 
@@ -262,7 +288,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fbb6040caf0>
+    <jinja2.runtime.BlockReference object at 0x7f4d4e2c8eb0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

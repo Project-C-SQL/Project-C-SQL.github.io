@@ -360,7 +360,7 @@
             <span class="n">db_name</span> <span class="o">=</span> <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># reverse back, concatenate, and remove \n&#39;s</span>
-        
+
         <span class="c1"># TODO/BUG: removing \n&#39;s is a tough problem, see:</span>
         <span class="c1"># &quot;pgdb=&gt; SELECT * FROM orders WHERE order_tot</span>
         <span class="c1"># al_eur = 100;&quot;</span>
@@ -368,10 +368,10 @@
         <span class="c1"># &quot;pgdb=&gt; SELECT</span>
         <span class="c1"># * FROM orders WHERE order_total_eur = 100;</span>
         <span class="c1"># should parse as \n -&gt; &quot; &quot; to avoid &quot;SELECT* FROM ..&quot;.</span>
-        <span class="c1"># replacing \n&#39;s with &quot;&quot; maybe has less edge cases.</span>
+        <span class="c1"># replacing \n&#39;s with &quot;&quot; maybe has less edge cases. Or actually more.</span>
         <span class="n">reversed_flattened_res</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> \
             <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">results</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">no_newlines_res</span> <span class="o">=</span> <span class="n">reversed_flattened_res</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">no_newlines_res</span> <span class="o">=</span> <span class="n">reversed_flattened_res</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
 
         <span class="c1"># Is the statement a SELECT statement?</span>
         <span class="n">match_select_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
@@ -437,7 +437,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fbb607fac80>
+    <jinja2.runtime.BlockReference object at 0x7f4d4e2f55d0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
