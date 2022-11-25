@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pg4n.subquery_orderby_checker &mdash; PostgreSQL for novices  documentation</title>
+  <title>pg4n.subquery_order_by_checker &mdash; PostgreSQL for novices  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -121,8 +121,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker"><code class="docutils literal notranslate"><span class="pre">StrangeHavingChecker</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.subquery_orderby_checker">pg4n.subquery_orderby_checker module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.subquery_order_by_checker">pg4n.subquery_order_by_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.subquery_order_by_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.subquery_select_checker">pg4n.subquery_select_checker module</a><ul>
@@ -155,7 +155,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>pg4n.subquery_orderby_checker</li>
+      <li>pg4n.subquery_order_by_checker</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -164,7 +164,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for pg4n.subquery_orderby_checker</h1><div class="highlight"><pre>
+  <h1>Source code for pg4n.subquery_order_by_checker</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">sqlglot.expressions</span> <span class="k">as</span> <span class="nn">exp</span>
@@ -173,12 +173,12 @@
 <span class="kn">from</span> <span class="nn">.errfmt</span> <span class="kn">import</span> <span class="n">ErrorFormatter</span>
 
 
-<div class="viewcode-block" id="SubqueryOrderByChecker"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker">[docs]</a><span class="k">class</span> <span class="nc">SubqueryOrderByChecker</span><span class="p">:</span>
+<div class="viewcode-block" id="SubqueryOrderByChecker"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.subquery_order_by_checker.SubqueryOrderByChecker">[docs]</a><span class="k">class</span> <span class="nc">SubqueryOrderByChecker</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">,</span> <span class="n">qep_analysis</span><span class="p">:</span> <span class="n">QEPAnalysis</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span> <span class="o">=</span> <span class="n">parsed_sql</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qep_analysis</span><span class="p">:</span> <span class="n">QEPAnalysis</span> <span class="o">=</span> <span class="n">qep_analysis</span>
 
-<div class="viewcode-block" id="SubqueryOrderByChecker.check"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="SubqueryOrderByChecker.check"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.subquery_order_by_checker.SubqueryOrderByChecker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns warning message if there exists ORDER BY in a subquery,</span>
 <span class="sd">        otherwise None.</span>
@@ -198,7 +198,7 @@
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">warning</span> <span class="o">=</span> <span class="s2">&quot;ORDER BY in a subquery&quot;</span>
-        <span class="n">warning_name</span> <span class="o">=</span> <span class="s2">&quot;InnerOrderBy&quot;</span>
+        <span class="n">warning_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;Checker&quot;</span><span class="p">)</span>
         <span class="n">formatter</span> <span class="o">=</span> <span class="n">ErrorFormatter</span><span class="p">(</span><span class="n">warning</span><span class="p">,</span> <span class="n">warning_name</span><span class="p">)</span>
         <span class="n">warning_msg</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">format</span><span class="p">()</span>
 
@@ -219,7 +219,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f02d1b22d10>
+    <jinja2.runtime.BlockReference object at 0x7f41e9543a30>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

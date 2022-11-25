@@ -121,8 +121,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker"><code class="docutils literal notranslate"><span class="pre">StrangeHavingChecker</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.subquery_orderby_checker">pg4n.subquery_orderby_checker module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.subquery_order_by_checker">pg4n.subquery_order_by_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.subquery_order_by_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.subquery_select_checker">pg4n.subquery_select_checker module</a><ul>
@@ -315,7 +315,9 @@
             <span class="n">domain1</span> <span class="o">=</span> <span class="n">suspicious_cmp_context</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span>
             <span class="n">domain2</span> <span class="o">=</span> <span class="n">suspicious_cmp_context</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span>
             <span class="n">warning</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Comparison between different domains (</span><span class="si">{</span><span class="n">domain1</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">domain2</span><span class="si">}</span><span class="s2">)&quot;</span>
-            <span class="n">warning_name</span> <span class="o">=</span> <span class="s2">&quot;CmpDomains&quot;</span>
+            <span class="c1"># TODO: Develop more principled way of matching warning_name with</span>
+            <span class="c1">#       the options expected in the configuration files.</span>
+            <span class="n">warning_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;Checker&quot;</span><span class="p">)</span>
 
             <span class="n">cmp_exp</span> <span class="o">=</span> <span class="n">suspicious_cmp_context</span><span class="o">.</span><span class="n">expression</span>
 
@@ -372,7 +374,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f02d1d458d0>
+    <jinja2.runtime.BlockReference object at 0x7f41e9370d30>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

@@ -121,8 +121,8 @@
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker"><code class="docutils literal notranslate"><span class="pre">StrangeHavingChecker</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.subquery_orderby_checker">pg4n.subquery_orderby_checker module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.subquery_order_by_checker">pg4n.subquery_order_by_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.subquery_order_by_checker.SubqueryOrderByChecker"><code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.subquery_select_checker">pg4n.subquery_select_checker module</a><ul>
@@ -213,7 +213,7 @@
 </li>
         <li><a href="api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker.check">(pg4n.strange_having_checker.StrangeHavingChecker method)</a>
 </li>
-        <li><a href="api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker.check">(pg4n.subquery_orderby_checker.SubqueryOrderByChecker method)</a>
+        <li><a href="api/pg4n.html#pg4n.subquery_order_by_checker.SubqueryOrderByChecker.check">(pg4n.subquery_order_by_checker.SubqueryOrderByChecker method)</a>
 </li>
         <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectChecker.check">(pg4n.subquery_select_checker.SubquerySelectChecker method)</a>
 </li>
@@ -228,9 +228,9 @@
 </li>
       <li><a href="api/pg4n.html#pg4n.cmp_domain_checker.CmpContext">CmpContext (class in pg4n.cmp_domain_checker)</a>
 </li>
-      <li><a href="api/pg4n.html#pg4n.cmp_domain_checker.CmpDomainChecker">CmpDomainChecker (class in pg4n.cmp_domain_checker)</a>
+      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.CmpDomain">CmpDomain (pg4n.config_values.ConfigValues attribute)</a>
 </li>
-      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.CmpDomains">CmpDomains (pg4n.config_values.ConfigValues attribute)</a>
+      <li><a href="api/pg4n.html#pg4n.cmp_domain_checker.CmpDomainChecker">CmpDomainChecker (class in pg4n.cmp_domain_checker)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.sqlparser.Column">Column (class in pg4n.sqlparser)</a>
 </li>
@@ -262,6 +262,8 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.EqWildcard">EqWildcard (pg4n.config_values.ConfigValues attribute)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.eq_wildcard_checker.EqWildcardChecker">EqWildcardChecker (class in pg4n.eq_wildcard_checker)</a>
 </li>
   </ul></td>
@@ -312,13 +314,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.ifilter">ifilter() (pg4n.psqlwrapper.PsqlWrapper method)</a>
 </li>
-      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.ImpliedExpression">ImpliedExpression (pg4n.config_values.ConfigValues attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker">ImpliedExpressionChecker (class in pg4n.implied_expression_checker)</a>
+      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.ImpliedExpression">ImpliedExpression (pg4n.config_values.ConfigValues attribute)</a>
 </li>
-      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.InnerOrderBy">InnerOrderBy (pg4n.config_values.ConfigValues attribute)</a>
+      <li><a href="api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker">ImpliedExpressionChecker (class in pg4n.implied_expression_checker)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -368,7 +368,7 @@
 </li>
         <li><a href="api/pg4n.html#module-pg4n.strange_having_checker">pg4n.strange_having_checker</a>
 </li>
-        <li><a href="api/pg4n.html#module-pg4n.subquery_orderby_checker">pg4n.subquery_orderby_checker</a>
+        <li><a href="api/pg4n.html#module-pg4n.subquery_order_by_checker">pg4n.subquery_order_by_checker</a>
 </li>
         <li><a href="api/pg4n.html#module-pg4n.subquery_select_checker">pg4n.subquery_select_checker</a>
 </li>
@@ -542,10 +542,10 @@
 </li>
       </ul></li>
       <li>
-    pg4n.subquery_orderby_checker
+    pg4n.subquery_order_by_checker
 
       <ul>
-        <li><a href="api/pg4n.html#module-pg4n.subquery_orderby_checker">module</a>
+        <li><a href="api/pg4n.html#module-pg4n.subquery_order_by_checker">module</a>
 </li>
       </ul></li>
       <li>
@@ -643,19 +643,25 @@
 </li>
       <li><a href="api/pg4n.html#pg4n.psqlparser.PsqlParser.stmt_end">stmt_end (pg4n.psqlparser.PsqlParser attribute)</a>
 </li>
+      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.StrangeHaving">StrangeHaving (pg4n.config_values.ConfigValues attribute)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker">StrangeHavingChecker (class in pg4n.strange_having_checker)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectContext.subquery">subquery (pg4n.subquery_select_checker.SubquerySelectContext attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectContext.subquery">subquery (pg4n.subquery_select_checker.SubquerySelectContext attribute)</a>
+      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.SubqueryOrderBy">SubqueryOrderBy (pg4n.config_values.ConfigValues attribute)</a>
 </li>
-      <li><a href="api/pg4n.html#pg4n.subquery_orderby_checker.SubqueryOrderByChecker">SubqueryOrderByChecker (class in pg4n.subquery_orderby_checker)</a>
+      <li><a href="api/pg4n.html#pg4n.subquery_order_by_checker.SubqueryOrderByChecker">SubqueryOrderByChecker (class in pg4n.subquery_order_by_checker)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.SubquerySelect">SubquerySelect (pg4n.config_values.ConfigValues attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectChecker">SubquerySelectChecker (class in pg4n.subquery_select_checker)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.subquery_select_checker.SubquerySelectContext">SubquerySelectContext (class in pg4n.subquery_select_checker)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.SumDistinct">SumDistinct (pg4n.config_values.ConfigValues attribute)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker">SumDistinctChecker (class in pg4n.sum_distinct_checker)</a>
 </li>
@@ -714,7 +720,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f02d1cadf00>
+    <jinja2.runtime.BlockReference object at 0x7f41e94b4610>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

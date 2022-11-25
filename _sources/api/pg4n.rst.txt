@@ -124,10 +124,10 @@ pg4n.strange\_having\_checker module
    :undoc-members:
    :show-inheritance:
 
-pg4n.subquery\_orderby\_checker module
---------------------------------------
+pg4n.subquery\_order\_by\_checker module
+----------------------------------------
 
-.. automodule:: pg4n.subquery_orderby_checker
+.. automodule:: pg4n.subquery_order_by_checker
    :members:
    :undoc-members:
    :show-inheritance:
