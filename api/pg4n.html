@@ -243,10 +243,10 @@ Returns a warning message if something was found, otherwise None.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pg4n.config_reader.ConfigReader.read">
 <span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/config_reader.html#ConfigReader.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.config_reader.ConfigReader.read" title="Permalink to this definition"></a></dt>
-<dd><p>The configuration files are read in order from:
-/etc/pg4n/config, $XDG_CONFIG_HOME/pg4n/config, or if
-$XDG_CONFIG_HOME is not set, from $HOME/.config/pg4n/config,
-each new value introduced in latter files overriding the previous value.</p>
+<dd><p>The configuration files are read in order from: /etc/pg4n.conf then from
+$XDG_CONFIG_HOME/pg4n.conf, or if $XDG_CONFIG_HOME is not set, from
+$HOME/.config/pg4n.conf, and lastly from $PWD/pg4n.conf, with each new
+value introduced in latter files overriding the previous value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#pg4n.config_values.ConfigValues" title="pg4n.config_values.ConfigValues"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigValues</span></code></a>]</p>
@@ -1096,7 +1096,7 @@ otherwise None</p>
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f4d4dc1d000>
+    <jinja2.runtime.BlockReference object at 0x7f02d1e18fd0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

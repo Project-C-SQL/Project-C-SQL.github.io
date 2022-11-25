@@ -182,10 +182,10 @@
 
 <div class="viewcode-block" id="ConfigReader.read"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.config_reader.ConfigReader.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConfigValues</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The configuration files are read in order from:</span>
-<span class="sd">        /etc/pg4n/config, $XDG_CONFIG_HOME/pg4n/config, or if</span>
-<span class="sd">        $XDG_CONFIG_HOME is not set, from $HOME/.config/pg4n/config,</span>
-<span class="sd">        each new value introduced in latter files overriding the previous value.</span>
+<span class="sd">        The configuration files are read in order from: /etc/pg4n.conf then from</span>
+<span class="sd">        $XDG_CONFIG_HOME/pg4n.conf, or if $XDG_CONFIG_HOME is not set, from</span>
+<span class="sd">        $HOME/.config/pg4n.conf, and lastly from $PWD/pg4n.conf, with each new</span>
+<span class="sd">        value introduced in latter files overriding the previous value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">config_fnames</span> <span class="o">=</span> <span class="p">[]</span>
@@ -258,7 +258,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f4d4e03d2d0>
+    <jinja2.runtime.BlockReference object at 0x7f02d2241660>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
