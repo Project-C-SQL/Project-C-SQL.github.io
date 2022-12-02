@@ -165,15 +165,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pg4n.sqlparser</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">re</span>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
+<span class="kn">import</span> <span class="nn">psycopg</span>
 <span class="kn">import</span> <span class="nn">sqlglot</span>
 <span class="kn">import</span> <span class="nn">sqlglot.expressions</span> <span class="k">as</span> <span class="nn">exp</span>
 <span class="kn">from</span> <span class="nn">sqlglot.dialects.postgres</span> <span class="kn">import</span> <span class="n">Postgres</span>
-<span class="kn">import</span> <span class="nn">psycopg</span>
 
 
 <div class="viewcode-block" id="PostgreSQLDataType"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sqlparser.PostgreSQLDataType">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -333,7 +333,6 @@
 
         <span class="c1"># transforms 1-element tuples to just list of elements</span>
         <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">]</span>
-        <span class="c1">#        print(f&quot;column_names: {column_names}&quot;)</span>
 
         <span class="k">return</span> <span class="n">column_names</span>
 
@@ -374,7 +373,6 @@
 
         <span class="c1"># transforms 1-element tuples to just list of elements</span>
         <span class="n">type_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">type_names</span><span class="p">]</span>
-        <span class="c1">#        print(f&quot;type_names: {type_names}&quot;)</span>
 
         <span class="n">parseable_type_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from_internal_types</span><span class="p">(</span><span class="n">type_names</span><span class="p">)</span>
 
@@ -391,43 +389,179 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">converted_types</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">character_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:character|char)\(\s*(\d+)\s*\)$&quot;</span><span class="p">)</span>
+
+        <span class="c1">#  +----------------------------------------------------------+</span>
+        <span class="c1">#  | TRIVIAL_MATCHERS                                         |</span>
+        <span class="c1">#  +----------------------------------------------------------+</span>
+        <span class="n">int_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:int|integer|int4)$&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+        <span class="n">smallint_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:smallint|int2)$&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+        <span class="n">bigint_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:bigint|int8)$&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+        <span class="n">bool_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:boolean|bool)$&quot;</span><span class="p">)</span>
+        <span class="n">real_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:real|float4)$&quot;</span><span class="p">)</span>
+        <span class="n">bytea_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:bytea)$&quot;</span><span class="p">)</span>
+        <span class="n">money_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:money)$&quot;</span><span class="p">)</span>
+        <span class="n">date_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:date)$&quot;</span><span class="p">)</span>
+        <span class="n">cidr_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:cidr)$&quot;</span><span class="p">)</span>
+        <span class="n">inet_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:inet)$&quot;</span><span class="p">)</span>
+        <span class="n">json_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:json)$&quot;</span><span class="p">)</span>
+        <span class="n">jsonb_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:jsonb)$&quot;</span><span class="p">)</span>
+        <span class="n">macaddr_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:macaddr)$&quot;</span><span class="p">)</span>
+        <span class="n">macaddr8_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:macaddr8)$&quot;</span><span class="p">)</span>
+        <span class="n">double_precission_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:(?:double precision)|float8)$&quot;</span><span class="p">)</span>
+        <span class="n">text_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:text)$&quot;</span><span class="p">)</span>
+        <span class="n">tsquery_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:tsquery)$&quot;</span><span class="p">)</span>
+        <span class="n">tsvector_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:tsvector)$&quot;</span><span class="p">)</span>
+        <span class="n">uuid_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:uuid)$&quot;</span><span class="p">)</span>
+        <span class="n">xml_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:xml)$&quot;</span><span class="p">)</span>
+        <span class="n">circle_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:circle)$&quot;</span><span class="p">)</span>
+        <span class="n">box_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:box)$&quot;</span><span class="p">)</span>
+        <span class="n">path_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:path)$&quot;</span><span class="p">)</span>
+        <span class="n">line_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:line)$&quot;</span><span class="p">)</span>
+        <span class="n">lseg_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:lseg)$&quot;</span><span class="p">)</span>
+        <span class="n">point_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:point)$&quot;</span><span class="p">)</span>
+        <span class="n">polygon_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:polygon)$&quot;</span><span class="p">)</span>
+        <span class="n">interval_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:interval)$&quot;</span><span class="p">)</span>
+
+        <span class="c1">#  +----------------------------------------------------------+</span>
+        <span class="c1">#  | OPT_PRECISSION_MATCHERS                                  |</span>
+        <span class="c1">#  +----------------------------------------------------------+</span>
+        <span class="n">character_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:character|char)(?:\(\s*(\d+)\s*\))?$&quot;</span><span class="p">)</span>
+        <span class="n">bit_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:bit)(?:\(\s*(\d+)\s*\))?$&quot;</span><span class="p">)</span>
         <span class="n">varchar_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;^(?:(?:character varying)|varchar)\(\s*(\d+)\s*\)$&quot;</span>
+            <span class="sa">r</span><span class="s2">&quot;^(?:(?:character varying)|varchar)(?:\(\s*(\d+)\s*\))?$&quot;</span>
         <span class="p">)</span>
+        <span class="n">varbit_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(?:(?:bit varying)|varbit)(?:\(\s*(\d+)\s*\))?$&quot;</span><span class="p">)</span>
+
+        <span class="n">timestamp_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;^timestamp(?:\(\s*(\d+)\s*\))?(?: without time zone)?$&quot;</span>
+        <span class="p">)</span>
+        <span class="n">timestamptz_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;^(?:timestamp|timestamptz)(?:\(\s*(\d+)\s*\))?(?: with time zone)?$&quot;</span>
+        <span class="p">)</span>
+        <span class="n">time_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^time(?:\(\s*(\d+)\s*\))?(?: without time zone)?$&quot;</span><span class="p">)</span>
+        <span class="n">timetz_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;^(?:time|timetz)(?:\(\s*(\d+)\s*\))?(?: with time zone)?$&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1">#  +----------------------------------------------------------+</span>
+        <span class="c1">#  | COMPLEX_MATCHERS                                         |</span>
+        <span class="c1">#  +----------------------------------------------------------+</span>
         <span class="n">numeric_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;^(?:numeric|decimal)\s*\(\s*(\d+)(?:\s*,\s*(\d+))?\s*\)$&quot;</span>
+            <span class="sa">r</span><span class="s2">&quot;^(?:numeric|decimal)(?:\(\s*(\d+)(?:\s*,\s*(\d+))?\s*\))?$&quot;</span>
         <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">type_name</span> <span class="ow">in</span> <span class="n">type_names</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;integer&quot;</span><span class="p">:</span>
+            <span class="c1">#  +----------------------------------------------------------+</span>
+            <span class="c1">#  | TRIVIAL_CASES                                            |</span>
+            <span class="c1">#  +----------------------------------------------------------+</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">int_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
                 <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;INT&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;character&quot;</span><span class="p">:</span>
-                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;CHAR&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s2">&quot;char&quot;</span><span class="p">:</span>
-                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;CHAR&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">smallint_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;SMALLINT&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">bigint_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;BIGINT&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">bool_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;BOOL&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">real_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;REAL&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">bytea_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;BYTEA&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">money_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;MONEY&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">date_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;DATE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">cidr_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;CIDR&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">inet_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;INET&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">json_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;JSON&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">jsonb_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;JSONB&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">macaddr_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;MACADDR&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">macaddr8_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;MACADDR8&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">double_precission_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;DOUBLE_PRECISSION&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">text_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;TEXT&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">tsquery_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;TSQUERY&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">tsvector_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;TSVECTOR&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">uuid_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;UUID&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">xml_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;XML&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">circle_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;CIRCLE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">box_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;BOX&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">path_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;PATH&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">line_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;LINE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">lseg_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;LSEG&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">point_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;POINT&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">polygon_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;POLYGON&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">interval_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;INTERVAL&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+            <span class="c1">#  +----------------------------------------------------------+</span>
+            <span class="c1">#  | OPT_PRECISSION_CASES                                     |</span>
+            <span class="c1">#  +----------------------------------------------------------+</span>
             <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">character_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
-                <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;CHAR(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_opt_precission_field_match</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="s2">&quot;CHAR&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
-                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv_type</span><span class="p">)</span>
-
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">bit_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_opt_precission_field_match</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="s2">&quot;BIT&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">varchar_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
-                <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;VARCHAR(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_opt_precission_field_match</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="s2">&quot;VARCHAR&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
-                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv_type</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">varbit_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_opt_precission_field_match</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="s2">&quot;VARBIT&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">timestamp_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_opt_precission_field_match</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="s2">&quot;TIMESTAMP&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">timestamptz_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_opt_precission_field_match</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="s2">&quot;TIMESTAMPTZ&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">time_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_opt_precission_field_match</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="s2">&quot;TIME&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">timetz_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
+                <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_opt_precission_field_match</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="s2">&quot;TIMETZ&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
 
+            <span class="c1">#  +----------------------------------------------------------+</span>
+            <span class="c1">#  | COMPLEX_CASES                                            |</span>
+            <span class="c1">#  +----------------------------------------------------------+</span>
             <span class="k">elif</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">numeric_matcher</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
-                <span class="n">num_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
-                <span class="k">if</span> <span class="n">num_groups</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;NUMERIC(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span>
-                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;DECIMAL&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                     <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv_type</span><span class="p">)</span>
-
-                <span class="k">elif</span> <span class="n">num_groups</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;NUMERIC(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="k">elif</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;DECIMAL(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;DECIMAL(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
                     <span class="n">conv_type</span> <span class="o">=</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
                         <span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
                     <span class="p">)</span>
@@ -435,7 +569,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># TODO: proper error handling</span>
                     <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;unrecognized number &#39;</span><span class="si">{</span><span class="n">num_groups</span><span class="si">}</span><span class="s2">&#39; of arguments for numeric() column type&quot;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;unrecognized number type format &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39; for numeric() column type&quot;</span><span class="p">,</span>
                         <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -447,7 +581,21 @@
                 <span class="p">)</span>
                 <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">converted_types</span></div>
+        <span class="k">return</span> <span class="n">converted_types</span>
+
+    <span class="k">def</span> <span class="nf">_eval_opt_precission_field_match</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">match</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Match</span><span class="p">,</span> <span class="n">type_name_prefix</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PostgreSQLDataType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates a internal type of the form: &#39;&lt;typename&gt;[ (p) ]&#39;</span>
+<span class="sd">        where p is optional precission field and returns a converted type used</span>
+<span class="sd">        &quot;normalized&quot; in the context of this program&#39;s conventions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span><span class="s2">&quot;TIMESTAMPTZ&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PostgreSQLDataType</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">type_name_prefix</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="kc">None</span>
+        <span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -464,7 +612,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f41e8d48e20>
+    <jinja2.runtime.BlockReference object at 0x7febc17627d0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
