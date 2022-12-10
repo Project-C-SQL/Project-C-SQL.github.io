@@ -85,6 +85,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.implied_expression_checker.ImpliedExpressionChecker"><code class="docutils literal notranslate"><span class="pre">ImpliedExpressionChecker</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pg4n.inconsistent_expression_checker">pg4n.inconsistent_expression_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker"><code class="docutils literal notranslate"><span class="pre">InconsistentExpressionChecker</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pg4n.main">pg4n.main module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pg4n.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
@@ -279,6 +283,11 @@ value introduced in latter files overriding the previous value.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pg4n.config_values.ConfigValues.InconsistentExpression">
+<span class="sig-name descname"><span class="pre">InconsistentExpression</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pg4n.config_values.ConfigValues.InconsistentExpression" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pg4n.config_values.ConfigValues.StrangeHaving">
 <span class="sig-name descname"><span class="pre">StrangeHaving</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pg4n.config_values.ConfigValues.StrangeHaving" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -352,6 +361,32 @@ wild card character (the ‘%’ character), otherwise None.</p>
 <dt class="sig sig-object py" id="pg4n.implied_expression_checker.ImpliedExpressionChecker.check">
 <span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/implied_expression_checker.html#ImpliedExpressionChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.implied_expression_checker.ImpliedExpressionChecker.check" title="Permalink to this definition"></a></dt>
 <dd><p>Returns warning_msg if implied expression is detected, otherwise None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pg4n.inconsistent_expression_checker">
+<span id="pg4n-inconsistent-expression-checker-module"></span><h2>pg4n.inconsistent_expression_checker module<a class="headerlink" href="#module-pg4n.inconsistent_expression_checker" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pg4n.inconsistent_expression_checker.InconsistentExpressionChecker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pg4n.inconsistent_expression_checker.</span></span><span class="sig-name descname"><span class="pre">InconsistentExpressionChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_sql</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qep_analysis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/inconsistent_expression_checker.html#InconsistentExpressionChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Inconsistent expression is some expression that is never true.
+For example: x = 10 AND x = 20</p>
+<p>This checker only finds a small subset of such expression, where postgresql
+itself detects the inconsistent expression in its query optimizer and
+exposes that information via its query execution plan.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pg4n.inconsistent_expression_checker.InconsistentExpressionChecker.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pg4n/inconsistent_expression_checker.html#InconsistentExpressionChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker.check" title="Permalink to this definition"></a></dt>
+<dd><p>Returns warning msg if the sql contains inconsistent expression,
+otherwise None.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
@@ -1111,7 +1146,7 @@ otherwise None</p>
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7febc171d570>
+    <jinja2.runtime.BlockReference object at 0x7fab546b09a0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

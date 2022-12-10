@@ -83,6 +83,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker"><code class="docutils literal notranslate"><span class="pre">ImpliedExpressionChecker</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.inconsistent_expression_checker">pg4n.inconsistent_expression_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker"><code class="docutils literal notranslate"><span class="pre">InconsistentExpressionChecker</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.main">pg4n.main module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
@@ -170,13 +174,14 @@
 
 <span class="c1"># Contains all the key-value pairs meaningful in a config file.</span>
 <div class="viewcode-block" id="ConfigValues"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.config_values.ConfigValues">[docs]</a><span class="k">class</span> <span class="nc">ConfigValues</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-    <span class="n">SubquerySelect</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">SumDistinct</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">StrangeHaving</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">CmpDomain</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">SubqueryOrderBy</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">EqWildcard</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">ImpliedExpression</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">EqWildcard</span><span class="p">:</span> <span class="nb">bool</span></div>
+    <span class="n">InconsistentExpression</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">StrangeHaving</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">SubqueryOrderBy</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">SubquerySelect</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">SumDistinct</span><span class="p">:</span> <span class="nb">bool</span></div>
 </pre></div>
 
            </div>
@@ -193,7 +198,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7febc1b163e0>
+    <jinja2.runtime.BlockReference object at 0x7fab55f45ed0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

@@ -60,6 +60,14 @@ pg4n.implied\_expression\_checker module
    :undoc-members:
    :show-inheritance:
 
+pg4n.inconsistent\_expression\_checker module
+---------------------------------------------
+
+.. automodule:: pg4n.inconsistent_expression_checker
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pg4n.main module
 ----------------
 

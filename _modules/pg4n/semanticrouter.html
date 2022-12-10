@@ -83,6 +83,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker"><code class="docutils literal notranslate"><span class="pre">ImpliedExpressionChecker</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.inconsistent_expression_checker">pg4n.inconsistent_expression_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker"><code class="docutils literal notranslate"><span class="pre">InconsistentExpressionChecker</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/pg4n.html#module-pg4n.main">pg4n.main module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../api/pg4n.html#pg4n.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
@@ -180,6 +184,7 @@
 <span class="kn">from</span> <span class="nn">.subquery_order_by_checker</span> <span class="kn">import</span> <span class="n">SubqueryOrderByChecker</span>
 <span class="kn">from</span> <span class="nn">.subquery_select_checker</span> <span class="kn">import</span> <span class="n">SubquerySelectChecker</span>
 <span class="kn">from</span> <span class="nn">.sum_distinct_checker</span> <span class="kn">import</span> <span class="n">SumDistinctChecker</span>
+<span class="kn">from</span> <span class="nn">.inconsistent_expression_checker</span> <span class="kn">import</span> <span class="n">InconsistentExpressionChecker</span>
 
 
 <div class="viewcode-block" id="SemanticRouter"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.semanticrouter.SemanticRouter">[docs]</a><span class="k">class</span> <span class="nc">SemanticRouter</span><span class="p">:</span>
@@ -271,6 +276,13 @@
             <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">analysis_result</span>
 
+            <span class="c1"># Inconsistent expression</span>
+            <span class="n">analysis_result</span> <span class="o">=</span> \
+                <span class="n">InconsistentExpressionChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">analysis_result</span>
+
         <span class="k">return</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># No semantic errors found</span></div></div>
 </pre></div>
 
@@ -288,7 +300,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7febc1813dc0>
+    <jinja2.runtime.BlockReference object at 0x7fab5450d810>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

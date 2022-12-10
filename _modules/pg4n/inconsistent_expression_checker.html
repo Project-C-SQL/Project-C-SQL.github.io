@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pg4n.sum_distinct_checker &mdash; PostgreSQL for novices  documentation</title>
+  <title>pg4n.inconsistent_expression_checker &mdash; PostgreSQL for novices  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -159,7 +159,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>pg4n.sum_distinct_checker</li>
+      <li>pg4n.inconsistent_expression_checker</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -168,40 +168,56 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for pg4n.sum_distinct_checker</h1><div class="highlight"><pre>
+  <h1>Source code for pg4n.inconsistent_expression_checker</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">sqlglot.expressions</span> <span class="k">as</span> <span class="nn">exp</span>
 
-<span class="kn">from</span> <span class="nn">.qepparser</span> <span class="kn">import</span> <span class="n">QEPAnalysis</span>
 <span class="kn">from</span> <span class="nn">.errfmt</span> <span class="kn">import</span> <span class="n">ErrorFormatter</span>
+<span class="kn">from</span> <span class="nn">.qepparser</span> <span class="kn">import</span> <span class="n">QEPAnalysis</span><span class="p">,</span> <span class="n">QEPNode</span>
 
 
-<div class="viewcode-block" id="SumDistinctChecker"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker">[docs]</a><span class="k">class</span> <span class="nc">SumDistinctChecker</span><span class="p">:</span>
+<div class="viewcode-block" id="InconsistentExpressionChecker"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker">[docs]</a><span class="k">class</span> <span class="nc">InconsistentExpressionChecker</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inconsistent expression is some expression that is never true.</span>
+<span class="sd">    For example: x = 10 AND x = 20</span>
+
+<span class="sd">    This checker only finds a small subset of such expression, where postgresql</span>
+<span class="sd">    itself detects the inconsistent expression in its query optimizer and</span>
+<span class="sd">    exposes that information via its query execution plan.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: Analyze the where expressions of the sql and find more inconsistent</span>
+    <span class="c1">#       expressions.</span>
+    <span class="c1">#       - One approach is to transform the expressions with its symbols from</span>
+    <span class="c1">#         sqlparser representation into a formula and finding whether it is</span>
+    <span class="c1">#         satisfiable with pysmt.</span>
+    <span class="c1">#       - This approach could also be used to find tautologies.</span>
+    <span class="c1">#       - Some preliminary work of this is in the experimental branch</span>
+    <span class="c1">#         feat/experimental-smt</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span><span class="p">,</span> <span class="n">qep_analysis</span><span class="p">:</span> <span class="n">QEPAnalysis</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span> <span class="o">=</span> <span class="n">parsed_sql</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">qep_analysis</span> <span class="o">=</span> <span class="n">qep_analysis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span> <span class="o">=</span> <span class="n">parsed_sql</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qep_analysis</span><span class="p">:</span> <span class="n">QEPAnalysis</span> <span class="o">=</span> <span class="n">qep_analysis</span>
 
-<div class="viewcode-block" id="SumDistinctChecker.check"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="InconsistentExpressionChecker.check"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns warning message if the sql has SUM/AVG(DISTINCT ...),</span>
-<span class="sd">        otherwise None</span>
+<span class="sd">        Returns warning msg if the sql contains inconsistent expression,</span>
+<span class="sd">        otherwise None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">sums</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Sum</span><span class="p">)</span>
-        <span class="n">avgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Avg</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">finder</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">QEPNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;One-Time Filter&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-        <span class="k">def</span> <span class="nf">has_distinct</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">this</span><span class="p">)</span> <span class="o">==</span> <span class="n">exp</span><span class="o">.</span><span class="n">Distinct</span>
+        <span class="n">has_onetime_filter</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qep_analysis</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="n">finder</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">has_inconsistent_expression</span> <span class="o">=</span> <span class="n">has_onetime_filter</span>
 
-        <span class="n">has_sum_distinct</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">has_distinct</span><span class="p">,</span> <span class="n">sums</span><span class="p">))</span>
-        <span class="n">has_avg_distinct</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">has_distinct</span><span class="p">,</span> <span class="n">avgs</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">has_sum_distinct</span> <span class="ow">or</span> <span class="n">has_avg_distinct</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_inconsistent_expression</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="n">warning</span> <span class="o">=</span> <span class="s2">&quot;DISTINCT in SUM or AVG&quot;</span>
         <span class="n">warning_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;Checker&quot;</span><span class="p">)</span>
+        <span class="n">warning</span> <span class="o">=</span> <span class="s2">&quot;Some condition is always false&quot;</span>
         <span class="n">formatter</span> <span class="o">=</span> <span class="n">ErrorFormatter</span><span class="p">(</span><span class="n">warning</span><span class="p">,</span> <span class="n">warning_name</span><span class="p">)</span>
         <span class="n">warning_msg</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">format</span><span class="p">()</span>
 
@@ -222,7 +238,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fab54ab4820>
+    <jinja2.runtime.BlockReference object at 0x7fab54ed6dd0>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

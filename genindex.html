@@ -83,6 +83,10 @@
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker"><code class="docutils literal notranslate"><span class="pre">ImpliedExpressionChecker</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.inconsistent_expression_checker">pg4n.inconsistent_expression_checker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker"><code class="docutils literal notranslate"><span class="pre">InconsistentExpressionChecker</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.main">pg4n.main module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/pg4n.html#pg4n.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
@@ -211,6 +215,8 @@
 </li>
         <li><a href="api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker.check">(pg4n.implied_expression_checker.ImpliedExpressionChecker method)</a>
 </li>
+        <li><a href="api/pg4n.html#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker.check">(pg4n.inconsistent_expression_checker.InconsistentExpressionChecker method)</a>
+</li>
         <li><a href="api/pg4n.html#pg4n.strange_having_checker.StrangeHavingChecker.check">(pg4n.strange_having_checker.StrangeHavingChecker method)</a>
 </li>
         <li><a href="api/pg4n.html#pg4n.subquery_order_by_checker.SubqueryOrderByChecker.check">(pg4n.subquery_order_by_checker.SubqueryOrderByChecker method)</a>
@@ -220,10 +226,10 @@
         <li><a href="api/pg4n.html#pg4n.sum_distinct_checker.SumDistinctChecker.check">(pg4n.sum_distinct_checker.SumDistinctChecker method)</a>
 </li>
       </ul></li>
-      <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output">check_and_act_on_repl_output() (pg4n.psqlwrapper.PsqlWrapper method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output">check_and_act_on_repl_output() (pg4n.psqlwrapper.PsqlWrapper method)</a>
+</li>
       <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.check_psql_version">check_psql_version() (pg4n.psqlwrapper.PsqlWrapper method)</a>
 </li>
       <li><a href="api/pg4n.html#pg4n.cmp_domain_checker.CmpContext">CmpContext (class in pg4n.cmp_domain_checker)</a>
@@ -314,11 +320,15 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.ifilter">ifilter() (pg4n.psqlwrapper.PsqlWrapper method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.ImpliedExpression">ImpliedExpression (pg4n.config_values.ConfigValues attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pg4n.html#pg4n.implied_expression_checker.ImpliedExpressionChecker">ImpliedExpressionChecker (class in pg4n.implied_expression_checker)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.config_values.ConfigValues.InconsistentExpression">InconsistentExpression (pg4n.config_values.ConfigValues attribute)</a>
+</li>
+      <li><a href="api/pg4n.html#pg4n.inconsistent_expression_checker.InconsistentExpressionChecker">InconsistentExpressionChecker (class in pg4n.inconsistent_expression_checker)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -351,6 +361,8 @@
         <li><a href="api/pg4n.html#module-pg4n.errfmt">pg4n.errfmt</a>
 </li>
         <li><a href="api/pg4n.html#module-pg4n.implied_expression_checker">pg4n.implied_expression_checker</a>
+</li>
+        <li><a href="api/pg4n.html#module-pg4n.inconsistent_expression_checker">pg4n.inconsistent_expression_checker</a>
 </li>
         <li><a href="api/pg4n.html#module-pg4n.main">pg4n.main</a>
 </li>
@@ -481,6 +493,13 @@
 
       <ul>
         <li><a href="api/pg4n.html#module-pg4n.implied_expression_checker">module</a>
+</li>
+      </ul></li>
+      <li>
+    pg4n.inconsistent_expression_checker
+
+      <ul>
+        <li><a href="api/pg4n.html#module-pg4n.inconsistent_expression_checker">module</a>
 </li>
       </ul></li>
       <li>
@@ -720,7 +739,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7febc1d1c5b0>
+    <jinja2.runtime.BlockReference object at 0x7fab54e00c70>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
