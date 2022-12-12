@@ -169,41 +169,56 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pg4n.psqlwrapper</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Interface with psql and capture all input and output.</span>
+<span></span><span class="c1"># Written by Tatu Heikkilä, tatu.heikkila@tuni.fi</span>
+<span class="c1"># Licensed under MIT.</span>
+<span class="sd">&quot;&quot;&quot;Interface with psql and capture all input and output.</span>
 
 <span class="sd">Uses pexpect in combination with pyte for interfacing and screen-scraping</span>
+<span class="sd">respectively.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">get_terminal_size</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+
 <span class="kn">import</span> <span class="nn">pexpect</span>
 <span class="kn">from</span> <span class="nn">pyte</span> <span class="kn">import</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">Screen</span>
-<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">get_terminal_size</span>
 
 <span class="kn">from</span> <span class="nn">.psqlparser</span> <span class="kn">import</span> <span class="n">PsqlParser</span>
 
 
 <div class="viewcode-block" id="PsqlWrapper"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper">[docs]</a><span class="k">class</span> <span class="nc">PsqlWrapper</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Handles terminal interfacing with psql, using the parameter parser \</span>
-<span class="sd">    to pick up relevant SQL statements for the hook function.</span>
+<span class="sd">    to pick up relevant SQL statements and syntax errors for hook functions.&quot;&quot;&quot;</span>
 
-<span class="sd">    Only one (static) class instance is intended for use in program.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
+    <span class="c1"># debug creates pyte.screen (current screenscraping context) and</span>
+    <span class="c1"># psqlwrapper.log (capturing terminal stream) in working directory</span>
     <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
     <span class="n">supported_psql_versions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;14.5&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psql_args</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
-                 <span class="n">hook_f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span> <span class="n">parser</span><span class="p">:</span> <span class="n">PsqlParser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">psql_args</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+        <span class="n">hook_semantic_f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">hook_syntax_f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">parser</span><span class="p">:</span> <span class="n">PsqlParser</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Build wrapper for selected database.</span>
 
-<span class="sd">        :param db_name_parameter: is name of database we are connecting to.</span>
-<span class="sd">        :param hook_f: is a callback to which scraped SQL queries are passed \</span>
-<span class="sd">        to and from which semantic error messages are received in return.</span>
+<span class="sd">        :param psql_args: are the command-line arguments pg4n has been called \</span>
+<span class="sd">        with.</span>
+<span class="sd">        :param hook_semantic_f: is a callback to which scraped SQL queries are\</span>
+<span class="sd">        passed to, and from which corresponding semantic warning messages are \</span>
+<span class="sd">        received in return.</span>
+<span class="sd">        :param hook_syntax_f: is a callback to which scraped syntax error \</span>
+<span class="sd">        messages are passed to, and from which corresponding warning messages \</span>
+<span class="sd">        are received.</span>
 <span class="sd">        :param parser: A parser that implements the required parsing functions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">psql_args</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">psql_args</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">analyze</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook_f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semantic_analyze</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook_semantic_f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">syntax_analyze</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook_syntax_f</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">:</span> <span class="n">PsqlParser</span> <span class="o">=</span> <span class="n">parser</span>
 
         <span class="c1"># shutil.get_terminal_size()</span>
@@ -213,71 +228,88 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pyte_screen</span><span class="p">:</span> <span class="n">Screen</span> <span class="o">=</span> <span class="n">Screen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pyte_screen_output_sink</span><span class="p">:</span> <span class="n">Stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyte_screen</span><span class="p">)</span>
 
-        <span class="c1"># Analysis is always done when user presses Return</span>
-        <span class="c1"># and resulting message is saved until when new prompt comes in</span>
+        <span class="c1"># Semantic analysis is always done when user presses Return</span>
+        <span class="c1"># and resulting message is saved here until when new prompt comes in</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-<div class="viewcode-block" id="PsqlWrapper.start"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Start psql process and then start feeding hook function with \</span>
-<span class="sd">        intercepted output.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PsqlWrapper.start"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span>
+        <span class="bp">self</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Start psql process and feed hook functions with \</span>
+<span class="sd">        intercepted queries and syntax errors.</span>
 
-        <span class="n">version_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_psql_version</span><span class="p">()</span>
+<span class="sd">        Control is only returned after psql process exits.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">version_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_psql_version</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">version_msg</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">version_msg</span><span class="p">)</span>
 
-        <span class="n">c</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="s2">&quot;psql &quot;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psql_args</span><span class="p">),</span>
-                          <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
-                          <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">))</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span>
+            <span class="s2">&quot;psql &quot;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psql_args</span><span class="p">),</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+            <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="p">)</span>
 
-        <span class="n">c</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">input_filter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ifilter</span><span class="p">,</span>
-                   <span class="n">output_filter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ofilter</span><span class="p">)</span></div>
+        <span class="n">c</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">input_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">output_filter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_intercept</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PsqlWrapper.check_psql_version"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.check_psql_version">[docs]</a>    <span class="k">def</span> <span class="nf">check_psql_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">version_info</span> <span class="o">=</span> \
-            <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="s2">&quot;psql &quot;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psql_args</span><span class="p">)</span> <span class="o">+</span>
-                          <span class="s2">&quot; --version&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_check_psql_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check PostgreSQL version via psql child process and match \</span>
+<span class="sd">        against versions pg4n is tested with.</span>
+
+<span class="sd">        :returns: an empty string if current version has been tested, \</span>
+<span class="sd">        otherwise a warning message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">version_info</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span>
+            <span class="s2">&quot;psql &quot;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psql_args</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; --version&quot;</span>
+        <span class="p">)</span>
         <span class="n">version_info</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">pexpect</span><span class="o">.</span><span class="n">EOF</span><span class="p">)</span>
         <span class="n">version_info_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">version_info</span><span class="o">.</span><span class="n">before</span><span class="p">)</span>
         <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_psql_version</span><span class="p">(</span><span class="n">version_info_str</span><span class="p">)</span>
+
+        <span class="c1"># command-line arguments prevent interactive sessions (e.g pg4n --help)</span>
+        <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
         <span class="n">version_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">version</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_psql_versions</span>
         <span class="k">if</span> <span class="n">version_ok</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;Pg4n has only been tested on psql versions &quot;</span> <span class="o">+</span> \
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">supported_psql_versions</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span></div>
-        
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="s2">&quot;Pg4n has only been tested on psql versions &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">supported_psql_versions</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+            <span class="p">)</span>
 
-<div class="viewcode-block" id="PsqlWrapper.ifilter"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.ifilter">[docs]</a>    <span class="k">def</span> <span class="nf">ifilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;User input filter function for pexpect.interact: not used.</span>
-
-<span class="sd">        :param input: user input characters.</span>
-<span class="sd">        :returns: unchanged input.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">input</span></div>
-
-<div class="viewcode-block" id="PsqlWrapper.ofilter"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.ofilter">[docs]</a>    <span class="k">def</span> <span class="nf">ofilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Forward output to `check_and_act_on_repl_output()` and feed \</span>
-<span class="sd">        output to pyte screen for future screen-scraping.</span>
+    <span class="k">def</span> <span class="nf">_intercept</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">bytes</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Forward output to `_check_and_act_on_repl_output` and feed \</span>
+<span class="sd">        output to pyte screen for screenscraping.</span>
 
 <span class="sd">        :param output: output seen on terminal screen.</span>
 <span class="sd">        :returns: output with injected semantic error messages.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">new_output</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_and_act_on_repl_output</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">new_output</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_and_act_on_repl_output</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pyte_screen_output_sink</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">new_output</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;pyte.screen&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyte_screen</span><span class="o">.</span><span class="n">display</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyte_screen</span><span class="o">.</span><span class="n">display</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">g</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;psqlwrapper.log&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
             <span class="n">g</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">new_output</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">g</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">new_output</span></div>
+        <span class="k">return</span> <span class="n">new_output</span>
 
-<div class="viewcode-block" id="PsqlWrapper.check_and_act_on_repl_output"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlwrapper.PsqlWrapper.check_and_act_on_repl_output">[docs]</a>    <span class="k">def</span> <span class="nf">check_and_act_on_repl_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">latest_output</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_check_and_act_on_repl_output</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">latest_output</span><span class="p">:</span> <span class="nb">bytes</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Check if user has hit Return so we can start analyzing, \</span>
 <span class="sd">        or if a fresh prompt has come in and we can show them a helpful \</span>
 <span class="sd">        message.</span>
@@ -286,67 +318,98 @@
 <span class="sd">        analysis. It is also what the helpful message will be injected to.</span>
 <span class="sd">        :returns: output with injected semantic error messages.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># for optimization reasons, check output only if len() &gt; 1, so keyboard</span>
-        <span class="c1"># input does not trigger parsing (Return is always at least 2 length)</span>
+        <span class="n">new_output</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># for optimization reasons, check output only if len() &gt; 1, so most</span>
+        <span class="c1"># keyboard input does not trigger parsing</span>
+        <span class="c1"># (Return is always at least 2 length)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">latest_output</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">latest_output</span>
 
         <span class="c1"># User hit Return: parse for potential SQL query, analyze, and</span>
-        <span class="c1"># possibly provide a message to be included in next new prompt.</span>
+        <span class="c1"># save a potential warning to be included in before next fresh prompt.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_hit_return</span><span class="p">(</span><span class="n">latest_output</span><span class="p">):</span>
-            <span class="n">screen</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyte_screen</span><span class="o">.</span><span class="n">display</span><span class="p">)</span>
-            <span class="n">parsed_sql_query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_last_found_stmt</span><span class="p">(</span><span class="n">screen</span><span class="p">)</span>
+            <span class="c1"># get terminal screen contents</span>
+            <span class="n">screen</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> \
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyte_screen</span><span class="o">.</span><span class="n">display</span><span class="p">)</span>
+
+            <span class="n">parsed_sql_query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_last_stmt</span><span class="p">(</span><span class="n">screen</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">parsed_sql_query</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="c1"># feed query to hook function and save resulting message</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">parsed_sql_query</span><span class="p">)</span>
+                <span class="c1"># feed query to semantic analysis hook function</span>
+                <span class="c1"># and save resulting message</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_analyze</span><span class="p">(</span><span class="n">parsed_sql_query</span><span class="p">)</span>
 
-        <span class="c1"># If we have a semantic error message waiting and there is a fresh</span>
-        <span class="c1"># prompt:</span>
-        <span class="c1"># optimization: do not spend time parsing if there is no message:</span>
-        <span class="c1"># AND-clause will stop executing after first False.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> \
-           <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_new_prompt</span><span class="p">(</span>
-               <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">latest_output</span><span class="p">))</span> <span class="o">!=</span> <span class="p">[]:</span>  <span class="c1"># there is new prompt</span>
-            <span class="n">new_output</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_replace_prompt</span><span class="p">(</span><span class="n">latest_output</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="k">return</span> <span class="n">new_output</span>
+        <span class="c1"># If there is a fresh prompt:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">output_has_new_prompt</span><span class="p">(</span>
+                <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">latest_output</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="c1"># If we have a semantic error message waiting</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">new_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_replace_prompt</span><span class="p">(</span><span class="n">latest_output</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">return</span> <span class="n">new_output</span>
 
-        <span class="k">return</span> <span class="n">latest_output</span></div>
+            <span class="c1"># Since latest_output contains error details, we will have to</span>
+            <span class="c1"># see how the screen would look like, but still allow injecting</span>
+            <span class="c1"># an insightful syntax error message from the syntax analysis.</span>
+            <span class="n">potential_future_screen</span> <span class="o">=</span> \
+                <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyte_screen</span><span class="p">)</span>
+            <span class="n">potential_future_screen_output_sink</span> <span class="o">=</span> \
+                <span class="n">Stream</span><span class="p">(</span><span class="n">potential_future_screen</span><span class="p">)</span>
+            <span class="n">potential_future_screen_output_sink</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span>
+                <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">latest_output</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">potential_future_contents</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">potential_future_screen</span><span class="o">.</span><span class="n">display</span>
+            <span class="p">)</span>
+            <span class="n">syntax_error</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_syntax_error</span><span class="p">(</span><span class="n">potential_future_contents</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">syntax_error</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">syntax_analyze</span><span class="p">(</span><span class="n">syntax_error</span><span class="p">)</span>
+                <span class="n">new_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_replace_prompt</span><span class="p">(</span><span class="n">latest_output</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">return</span> <span class="n">new_output</span>
+
+        <span class="k">return</span> <span class="n">latest_output</span>
 
     <span class="k">def</span> <span class="nf">_replace_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Inject saved semantic error message into given prompt.</span>
 
-<span class="sd">        :param prompt: is where the message is injected. A fresh prompt is \</span>
-<span class="sd">        expected.</span>
-<span class="sd">        :returns: a prompt with injected message.</span>
+<span class="sd">        :param prompt: is output where message is injected to. A fresh prompt \</span>
+<span class="sd">        is expected, or otherwise no injection is made.</span>
+<span class="sd">        :returns: a prompt with injected message, or unchanged if \</span>
+<span class="sd">        detecting new prompt fails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">split_prompt</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_new_prompt_and_rest</span><span class="p">(</span>
-                <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="n">split_prompt</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_new_prompt_and_rest</span><span class="p">(</span>
+                <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">split_prompt</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="k">return</span> <span class="n">prompt</span>  <span class="c1"># prompt is malformed and is returned as-is.</span>
         <span class="n">print_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg4n_message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">split_prompt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                     <span class="n">print_msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\r\n\r\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                     <span class="n">split_prompt</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                     <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span>
+            <span class="n">split_prompt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">print_msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\r\n\r\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">split_prompt</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s2">&quot;utf-8&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_user_hit_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Check if user hit return.</span>
 
 <span class="sd">        :param output: is raw console output to be checked for return press.</span>
-<span class="sd">        :returns: if user has indeed hit return.</span>
+<span class="sd">        :returns: if user has hit return.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># trivial case:</span>
         <span class="c1"># we assume only situation with \r\n at start of</span>
         <span class="c1"># line is when user has pressed enter</span>
-        <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="c1"># complicated case: user has ctrl-R&#39;d, copypasted command or something.</span>
         <span class="c1"># and the \r\n is somewhere in midst of output..</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_magical_return</span><span class="p">(</span>
-                <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="p">[]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">output_has_magical_return</span><span class="p">(</span>
+                <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 </pre></div>
@@ -365,7 +428,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fab545d6200>
+    <jinja2.runtime.BlockReference object at 0x7fb634b1ca30>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
