@@ -171,6 +171,7 @@
   <h1>Source code for pg4n.main</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pexpect</span>
 
@@ -178,19 +179,30 @@
 <span class="kn">from</span> <span class="nn">.semanticrouter</span> <span class="kn">import</span> <span class="n">SemanticRouter</span>
 <span class="kn">from</span> <span class="nn">.psqlparser</span> <span class="kn">import</span> <span class="n">PsqlParser</span>
 <span class="kn">from</span> <span class="nn">.psqlwrapper</span> <span class="kn">import</span> <span class="n">PsqlWrapper</span>
+<span class="kn">from</span> <span class="nn">.config_reader</span> <span class="kn">import</span> <span class="n">ConfigReader</span>
+<span class="kn">from</span> <span class="nn">.config_values</span> <span class="kn">import</span> <span class="n">ConfigValues</span>
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.main.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Initiate session by getting psql connection parameters via psql \</span>
 <span class="sd">    child process, initializing semantic analysis and wrapper modules, \</span>
 <span class="sd">    and then starting the session.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Configuration is ignored if there is error reading config files</span>
+    <span class="n">config_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConfigValues</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">config_reader</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">()</span>
+        <span class="n">config_values</span> <span class="o">=</span> <span class="n">config_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">config_values</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">conn_info</span> <span class="o">=</span> <span class="n">PsqlConnInfo</span><span class="p">(</span>
             <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># concat arguments</span>
             <span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">conn_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># asterisk unpacks the 5-tuple</span>
-            <span class="n">sem_router</span> <span class="o">=</span> <span class="n">SemanticRouter</span><span class="p">(</span><span class="o">*</span><span class="n">conn_info</span><span class="p">)</span>
+            <span class="n">sem_router</span> <span class="o">=</span> <span class="n">SemanticRouter</span><span class="p">(</span><span class="o">*</span><span class="n">conn_info</span><span class="p">,</span> <span class="n">config_values</span><span class="p">)</span>
             <span class="n">psql</span> <span class="o">=</span> <span class="n">PsqlWrapper</span><span class="p">(</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
                 <span class="c1"># semantic analysis:</span>
@@ -234,7 +246,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f84816be170>
+    <jinja2.runtime.BlockReference object at 0x7f08c9627b20>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
