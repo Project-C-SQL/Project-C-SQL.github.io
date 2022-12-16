@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Program architecture" href="program-architecture.html" />
-    <link rel="prev" title="Interfaces" href="interfaces.html" /> 
+    <link rel="next" title="Maintaining pg4n" href="maintenance-plan.html" />
+    <link rel="prev" title="General information" href="pg4n.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,20 +41,45 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="interfaces.html">Interfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="interfaces.html#psqlwrapper">PsqlWrapper</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="interfaces.html#wrapper-db-name-str-hook-f-callable-str-str-parser-psqlparser"><code class="docutils literal notranslate"><span class="pre">Wrapper(db_name:</span> <span class="pre">str,</span> <span class="pre">hook_f:</span> <span class="pre">Callable[str,</span> <span class="pre">str],</span> <span class="pre">parser:</span> <span class="pre">PsqlParser)</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pg4n.html">General information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#installing-pg4n">Installing pg4n</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#updating-pg4n">Updating pg4n</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#using-pg4n">Using pg4n</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pg4n.html#semantic-errors-detected">Semantic errors detected</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="interfaces.html#psqlparser">PsqlParser</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="interfaces.html#parse-for-a-new-prompt-psql-str-list-str"><code class="docutils literal notranslate"><span class="pre">parse_for_a_new_prompt(psql:</span> <span class="pre">str)</span> <span class="pre">-&gt;</span> <span class="pre">List[str]</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="interfaces.html#parse-first-found-stmt-psql-str-list-str"><code class="docutils literal notranslate"><span class="pre">parse_first_found_stmt(psql:str)</span> <span class="pre">-&gt;</span> <span class="pre">List[str]</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#backend">Backend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#errorformatter">ErrorFormatter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#psqlconninfo">PsqlConnInfo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qepparser">QEPParser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#semanticrouter">SemanticRouter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sqlparser">SQLParser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analysis-modules">Analysis modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#program-configuration">Program configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#frontend">Frontend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#psqlparser">PsqlParser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#psqlwrapper">PsqlWrapper</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="program-architecture.html">Program architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maintenance-plan.html">Maintaining pg4n</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="maintenance-plan.html#backend">Backend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="maintenance-plan.html#implementing-semantic-analysis-modules">Implementing semantic analysis modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="maintenance-plan.html#thoughts-on-syntax-error-analysis">Thoughts on syntax error analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance-plan.html#frontend">Frontend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="maintenance-plan.html#fixing-parsing-interception-bugs">Fixing parsing/interception bugs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="maintenance-plan.html#extending-parsers">Extending parsers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance-plan.html#known-limitations">Known limitations</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api/pg4n.html">pg4n package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.cmp_domain_checker">pg4n.cmp_domain_checker module</a><ul>
@@ -173,19 +198,130 @@
              
   <section id="architecture">
 <h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this heading"></a></h1>
-<p>The psql wrapper module has following requirements:</p>
+<p><img alt="Program architecture sketch" src="_images/architecture.jpg" /></p>
+<section id="backend">
+<h2>Backend<a class="headerlink" href="#backend" title="Permalink to this heading"></a></h2>
+<section id="errorformatter">
+<h3>ErrorFormatter<a class="headerlink" href="#errorformatter" title="Permalink to this heading"></a></h3>
+<p>Unified error formatting.
+Each Checker class must use this to format their warning messages.</p>
+</section>
+<section id="psqlconninfo">
+<h3>PsqlConnInfo<a class="headerlink" href="#psqlconninfo" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">PsqlConnInfo</span></code> fetches PostgresSQL connection info by running a <code class="docutils literal notranslate"><span class="pre">psql</span></code> command with given arguments (usually same arguments as with what the main <code class="docutils literal notranslate"><span class="pre">psql</span></code> process was called with).</p>
+</section>
+<section id="qepparser">
+<h3>QEPParser<a class="headerlink" href="#qepparser" title="Permalink to this heading"></a></h3>
+<p>See API docs.</p>
+</section>
+<section id="semanticrouter">
+<h3>SemanticRouter<a class="headerlink" href="#semanticrouter" title="Permalink to this heading"></a></h3>
+<p>Runs SQLParser, QEPParser and semantic error analysis modules (as configured) against given SQL query string.</p>
+</section>
+<section id="sqlparser">
+<h3>SQLParser<a class="headerlink" href="#sqlparser" title="Permalink to this heading"></a></h3>
+<p>Transforms sql string into a syntax tree.
+Also provides some utilities like finding all tables in a sql statement.</p>
+</section>
+<section id="analysis-modules">
+<h3>Analysis modules<a class="headerlink" href="#analysis-modules" title="Permalink to this heading"></a></h3>
+<section id="cmpdomainchecker">
+<h4>CmpDomainChecker<a class="headerlink" href="#cmpdomainchecker" title="Permalink to this heading"></a></h4>
+<p>Does analysis for suspicous comparisons between different domains.
+e.g., comparing columns off type VARCHAR(20) and VARCHAR(50)
+Returns a warning message if something was found, otherwise None.</p>
+</section>
+<section id="eqwildcardchecker">
+<h4>EqWildcardChecker<a class="headerlink" href="#eqwildcardchecker" title="Permalink to this heading"></a></h4>
+<p>Returns warning message if the sql has equals operation to a string with
+wild card character (the ‘%’ character), otherwise None.</p>
+</section>
+<section id="impliedexpressionchecker">
+<h4>ImpliedExpressionChecker<a class="headerlink" href="#impliedexpressionchecker" title="Permalink to this heading"></a></h4>
+<p>Returns warning message if implied expression is detected, otherwise None.</p>
+</section>
+<section id="inconsistentexpressionchecker">
+<h4>InconsistentExpressionChecker<a class="headerlink" href="#inconsistentexpressionchecker" title="Permalink to this heading"></a></h4>
+<p>Inconsistent expression is some expression that is never true.
+For example: x = 10 AND x = 20</p>
+<p>This checker only finds a small subset of such expression, where postgresql
+itself detects the inconsistent expression in its query optimizer and
+exposes that information via its query execution plan.</p>
+</section>
+<section id="strangehavingchecker">
+<h4>StrangeHavingChecker<a class="headerlink" href="#strangehavingchecker" title="Permalink to this heading"></a></h4>
+<p>Returns warning message if there exists HAVING without a GROUP BY, otherwise None.</p>
+</section>
+<section id="subqueryorderbychecker">
+<h4>SubqueryOrderByChecker<a class="headerlink" href="#subqueryorderbychecker" title="Permalink to this heading"></a></h4>
+<p>Returns warning message if there exists ORDER BY in a subquery,
+otherwise None.</p>
+<p>This check gives misses some situations with redundant ORDER BY but
+should never give false positives, only false negatives.</p>
+</section>
+<section id="subqueryselectchecker">
+<h4>SubquerySelectChecker<a class="headerlink" href="#subqueryselectchecker" title="Permalink to this heading"></a></h4>
+<p>Returns warning message if there no column SELECTed in a subquery is
+not used in that subquery of its own columns, otherwise returns None.</p>
+</section>
+<section id="sumdistinctchecker">
+<h4>SumDistinctChecker<a class="headerlink" href="#sumdistinctchecker" title="Permalink to this heading"></a></h4>
+<p>Returns warning message if the sql has SUM/AVG(DISTINCT …), otherwise None</p>
+</section>
+</section>
+<section id="program-configuration">
+<h3>Program configuration<a class="headerlink" href="#program-configuration" title="Permalink to this heading"></a></h3>
+<p>The configuration files are read in order from: /etc/pg4n.conf then from $XDG_CONFIG_HOME/pg4n.conf, or if $XDG_CONFIG_HOME is not set, from
+$HOME/.config/pg4n.conf, and lastly from $PWD/pg4n.conf, with each new value
+introduced in latter files overriding the previous value.</p>
+<p>Options in the configuration file are written like: “option_name value” where value may be: true, 1, yes, false, 0, no</p>
+<p>By default all warnings are enabled. Warnings can be disabled by warning type (which can be found from every warning message’s end) e.g.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CmpDomains</span> <span class="pre">false</span></code></p>
+<section id="configparser">
+<h4>ConfigParser<a class="headerlink" href="#configparser" title="Permalink to this heading"></a></h4>
+<p>Parses a configuration file.</p>
+</section>
+<section id="configreader">
+<h4>ConfigReader<a class="headerlink" href="#configreader" title="Permalink to this heading"></a></h4>
+<p>Reads all configuration files and combines their option output into a <code class="docutils literal notranslate"><span class="pre">ConfigValues</span></code> class.</p>
+</section>
+<section id="configvalues">
+<h4>ConfigValues<a class="headerlink" href="#configvalues" title="Permalink to this heading"></a></h4>
+<p>Contains option values specied in the configuration files.</p>
+</section>
+</section>
+</section>
+<section id="frontend">
+<h2>Frontend<a class="headerlink" href="#frontend" title="Permalink to this heading"></a></h2>
+<p>Frontend handles user’s psql session completely transparently via <code class="docutils literal notranslate"><span class="pre">PsqlWrapper</span></code>, although also injecting insightful messages regarding user’s semantic errors into the terminal output stream. It parses user’s SQL queries via <code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code> for consumption in the backend.</p>
+<section id="psqlparser">
+<h3>PsqlParser<a class="headerlink" href="#psqlparser" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code> uses <code class="docutils literal notranslate"><span class="pre">pyparsing</span></code> parser combinator library to provide parsing functions for</p>
 <ul class="simple">
-<li><p>Handle a user’s psql session transparently with select injections to psql output.</p></li>
-<li><p>Get query statements and their results, and sanitize them for syntactic analysis</p></li>
+<li><p>checking for non-obvious Return presses (<code class="docutils literal notranslate"><span class="pre">output_has_magical_return</span></code>)</p></li>
+<li><p>checking if given string has a new prompt (e.g <code class="docutils literal notranslate"><span class="pre">=&gt;</span> </code>) (<code class="docutils literal notranslate"><span class="pre">output_has_new_prompt</span></code>)</p></li>
+<li><p>parsing a new prompt and everything that precedes it in a string, to allow easy message injection (<code class="docutils literal notranslate"><span class="pre">parse_new_prompt_and_rest</span></code>)</p></li>
+<li><p>parsing last SQL SELECT query in a string (<code class="docutils literal notranslate"><span class="pre">parse_last_stmt</span></code>)</p></li>
+<li><p>parsing <code class="docutils literal notranslate"><span class="pre">psql</span> <span class="pre">--version</span></code> output for version number (<code class="docutils literal notranslate"><span class="pre">parse_psql_version</span></code>)</p></li>
+<li><p>parsing syntax errors (<code class="docutils literal notranslate"><span class="pre">ERROR:</span></code> .. <code class="docutils literal notranslate"><span class="pre">^</span></code>) (<code class="docutils literal notranslate"><span class="pre">parse_syntax_error</span></code>)</p></li>
 </ul>
+<p>Parsing rules common to more than 1 of these functions are listed in <code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code> body, but otherwise rules are inside respective functions.</p>
+</section>
+<section id="psqlwrapper">
+<h3>PsqlWrapper<a class="headerlink" href="#psqlwrapper" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">PsqlWrapper</span></code> is responsible for spawning and intercepting the user-interfacing <code class="docutils literal notranslate"><span class="pre">psql</span></code> process. <code class="docutils literal notranslate"><span class="pre">pexpect</span></code> library allows both spawning and intercepting the terminal control stream. <code class="docutils literal notranslate"><span class="pre">pyte</span></code> library keeps track of current terminal display.</p>
+<p>Overall working logic is handled by <code class="docutils literal notranslate"><span class="pre">_check_and_act_on_repl_output</span></code>, where it can be seen that queries are checked for every time user presses Return. If <code class="docutils literal notranslate"><span class="pre">PsqlParser</span></code> finds an SQL SELECT query, it’s passed to <code class="docutils literal notranslate"><span class="pre">SemanticRouter</span></code> for further analysis, and any insightful message returned is saved for later. Once all query results have been printed, and a new prompt (e.g <code class="docutils literal notranslate"><span class="pre">..=&gt;</span> </code>) is going to be printed next per <code class="docutils literal notranslate"><span class="pre">latest_output</span></code> parameter, the wrapper injects the returned message. If results included <code class="docutils literal notranslate"><span class="pre">ERROR:</span></code> .. <code class="docutils literal notranslate"><span class="pre">^</span></code>, it is sent to syntax error analysis, and any returned message will be injected immediately.</p>
+<p><code class="docutils literal notranslate"><span class="pre">PsqlWrapper</span></code> also checks <code class="docutils literal notranslate"><span class="pre">psql</span></code> version info and checks it against <code class="docutils literal notranslate"><span class="pre">PsqlWrapper.supported_psql_versions</span></code>.</p>
+</section>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="interfaces.html" class="btn btn-neutral float-left" title="Interfaces" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="program-architecture.html" class="btn btn-neutral float-right" title="Program architecture" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pg4n.html" class="btn btn-neutral float-left" title="General information" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="maintenance-plan.html" class="btn btn-neutral float-right" title="Maintaining pg4n" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -198,7 +334,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f0c5e508a90>
+    <jinja2.runtime.BlockReference object at 0x7f9d10ddb820>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

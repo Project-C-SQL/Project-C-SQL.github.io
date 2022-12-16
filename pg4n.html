@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Interfaces &mdash; PostgreSQL for novices  documentation</title>
+  <title>General information &mdash; PostgreSQL for novices  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -41,20 +41,45 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Interfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#psqlwrapper">PsqlWrapper</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#wrapper-db-name-str-hook-f-callable-str-str-parser-psqlparser"><code class="docutils literal notranslate"><span class="pre">Wrapper(db_name:</span> <span class="pre">str,</span> <span class="pre">hook_f:</span> <span class="pre">Callable[str,</span> <span class="pre">str],</span> <span class="pre">parser:</span> <span class="pre">PsqlParser)</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">General information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-pg4n">Installing pg4n</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-pg4n">Updating pg4n</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-pg4n">Using pg4n</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#semantic-errors-detected">Semantic errors detected</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#psqlparser">PsqlParser</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#parse-for-a-new-prompt-psql-str-list-str"><code class="docutils literal notranslate"><span class="pre">parse_for_a_new_prompt(psql:</span> <span class="pre">str)</span> <span class="pre">-&gt;</span> <span class="pre">List[str]</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#parse-first-found-stmt-psql-str-list-str"><code class="docutils literal notranslate"><span class="pre">parse_first_found_stmt(psql:str)</span> <span class="pre">-&gt;</span> <span class="pre">List[str]</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#backend">Backend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#errorformatter">ErrorFormatter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#psqlconninfo">PsqlConnInfo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#qepparser">QEPParser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#semanticrouter">SemanticRouter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#sqlparser">SQLParser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#analysis-modules">Analysis modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#program-configuration">Program configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#frontend">Frontend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#psqlparser">PsqlParser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="architecture.html#psqlwrapper">PsqlWrapper</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="program-architecture.html">Program architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maintenance-plan.html">Maintaining pg4n</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="maintenance-plan.html#backend">Backend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="maintenance-plan.html#implementing-semantic-analysis-modules">Implementing semantic analysis modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="maintenance-plan.html#thoughts-on-syntax-error-analysis">Thoughts on syntax error analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance-plan.html#frontend">Frontend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="maintenance-plan.html#fixing-parsing-interception-bugs">Fixing parsing/interception bugs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="maintenance-plan.html#extending-parsers">Extending parsers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="maintenance-plan.html#known-limitations">Known limitations</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api/pg4n.html">pg4n package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/pg4n.html#module-pg4n.cmp_domain_checker">pg4n.cmp_domain_checker module</a><ul>
@@ -161,9 +186,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Interfaces</li>
+      <li>General information</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/interfaces.md.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/pg4n.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -171,34 +196,33 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="interfaces">
-<h1>Interfaces<a class="headerlink" href="#interfaces" title="Permalink to this heading"></a></h1>
-<section id="psqlwrapper">
-<h2>PsqlWrapper<a class="headerlink" href="#psqlwrapper" title="Permalink to this heading"></a></h2>
-<p>Constructor is the only currently required interface.</p>
-<section id="wrapper-db-name-str-hook-f-callable-str-str-parser-psqlparser">
-<h3><code class="docutils literal notranslate"><span class="pre">Wrapper(db_name:</span> <span class="pre">str,</span> <span class="pre">hook_f:</span> <span class="pre">Callable[str,</span> <span class="pre">str],</span> <span class="pre">parser:</span> <span class="pre">PsqlParser)</span></code><a class="headerlink" href="#wrapper-db-name-str-hook-f-callable-str-str-parser-psqlparser" title="Permalink to this heading"></a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">db_name</span></code> is name of the database psql needs to access</p>
-<p><code class="docutils literal notranslate"><span class="pre">hook_f</span></code> is the function that the wrapper sends prettified user input &amp; program output to, and from where it gets its helpful messages to inject before next prompt.</p>
-<p><code class="docutils literal notranslate"><span class="pre">parser</span></code> is an implementation of PsqlParser interface.</p>
+  <section id="general-information">
+<h1>General information<a class="headerlink" href="#general-information" title="Permalink to this heading"></a></h1>
+<section id="installing-pg4n">
+<h2>Installing pg4n<a class="headerlink" href="#installing-pg4n" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pg4n</span></code></p>
 </section>
+<section id="updating-pg4n">
+<h2>Updating pg4n<a class="headerlink" href="#updating-pg4n" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">pg4n</span></code></p>
 </section>
-<section id="psqlparser">
-<h2>PsqlParser<a class="headerlink" href="#psqlparser" title="Permalink to this heading"></a></h2>
-<section id="parse-for-a-new-prompt-psql-str-list-str">
-<h3><code class="docutils literal notranslate"><span class="pre">parse_for_a_new_prompt(psql:</span> <span class="pre">str)</span> <span class="pre">-&gt;</span> <span class="pre">List[str]</span></code><a class="headerlink" href="#parse-for-a-new-prompt-psql-str-list-str" title="Permalink to this heading"></a></h3>
-<p>Parse for an empty prompt, usually to detect when a query evaluation has ended.</p>
-<p>Returns an empty list if none found.</p>
-<p><code class="docutils literal notranslate"><span class="pre">psql</span></code> is the psql REPL log to be inspected.</p>
-<p>Returns an empty list if no prompt is found. Returns prompt text (“dbname=&gt;” or “dbname=#”) if found.</p>
+<section id="using-pg4n">
+<h2>Using pg4n<a class="headerlink" href="#using-pg4n" title="Permalink to this heading"></a></h2>
+<p>Pg4n only injects messages for the user, and is otherwise completely transparent. For this reason, usage is identical to <code class="docutils literal notranslate"><span class="pre">psql</span></code> usage. <a class="reference external" href="https://www.postgresql.org/docs/14/app-psql.html">PostgreSQL: Documentation: 14: psql</a></p>
 </section>
-<section id="parse-first-found-stmt-psql-str-list-str">
-<h3><code class="docutils literal notranslate"><span class="pre">parse_first_found_stmt(psql:str)</span> <span class="pre">-&gt;</span> <span class="pre">List[str]</span></code><a class="headerlink" href="#parse-first-found-stmt-psql-str-list-str" title="Permalink to this heading"></a></h3>
-<p>Parse for the content between two prompts. Returns an empty list if there is no statement or there was an error.</p>
-<p>Expected to be deprecated when detecting multiple statements is implemented.</p>
-<p><code class="docutils literal notranslate"><span class="pre">psql</span></code> is the psql REPL log to be inspected.</p>
-<p>Returns an empty list if no SQL statement is found. If found, returns a list of strings containing complete statement (“SELECT …;”) if flattened.</p>
-</section>
+<section id="semantic-errors-detected">
+<h2>Semantic errors detected<a class="headerlink" href="#semantic-errors-detected" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Comparison between different domains (Error 31 per Brass and Goldberg, 2005) (<code class="docutils literal notranslate"><span class="pre">CmpDomainChecker</span></code>)</p></li>
+<li><p>Condition in the subquery can be moved up (Error 30 per Brass and Goldberg, 2005) (<code class="docutils literal notranslate"><span class="pre">SubquerySelectChecker</span></code>)</p></li>
+<li><p>DISTINCT in SUM and AVG (Error 33 per Brass and Goldberg, 2005) (<code class="docutils literal notranslate"><span class="pre">SumDistinctChecker</span></code>)</p></li>
+<li><p>Implied expression (Table already enforces the given expression) (<code class="docutils literal notranslate"><span class="pre">ImpliedExpressionChecker</span></code>)</p></li>
+<li><p>Inconsistent expression (Error 1 per Brass and Goldberg, 2005) (<code class="docutils literal notranslate"><span class="pre">InconsistentExpressionChecker</span></code>)</p></li>
+<li><p>ORDER BY in a subquery (<code class="docutils literal notranslate"><span class="pre">SubqueryOrderByChecker</span></code>)</p></li>
+<li><p>SELECT in subquery uses no tuple variable of subquery (Error 29 per Brass and Goldberg, 2005) (<code class="docutils literal notranslate"><span class="pre">SubquerySelectChecker</span></code>)</p></li>
+<li><p>Strange HAVING (Error 32 per Brass and Goldberg, 2005) (<code class="docutils literal notranslate"><span class="pre">StrangeHavingChecker</span></code>)</p></li>
+<li><p>Wildcards without LIKE (Error 34 per Brass and Goldberg, 2005) (<code class="docutils literal notranslate"><span class="pre">EqWildcardChecker</span></code>)</p></li>
+</ul>
 </section>
 </section>
 
@@ -220,7 +244,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f0c5e4437c0>
+    <jinja2.runtime.BlockReference object at 0x7f9d10dd8a90>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
