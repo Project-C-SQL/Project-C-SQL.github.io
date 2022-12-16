@@ -208,7 +208,7 @@
 
 <span class="sd">        &#39;sql&#39; should be a string of one or more postgresql statements</span>
 <span class="sd">        (delimited by &#39;;&#39;). The last &#39;;&#39; in &#39;sql&#39; is optional.</span>
-<span class="sd">        Throws sqlglot.ParseError on invalid sql.</span>
+<span class="sd">        Raises whichever Exception sqlglot wants to throw on invalid sql.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">sqlglot</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">read</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dialect</span><span class="p">)</span></div>
@@ -219,7 +219,7 @@
 <span class="sd">        Does not validate that &#39;sql&#39; contains only 1 statement!</span>
 <span class="sd">        &#39;sql&#39; should be a postgresql statement.</span>
 <span class="sd">        The trailing &#39;;&#39; in &#39;sql&#39; is optional.</span>
-<span class="sd">        Throws sqlglot.ParseError on invalid sql.</span>
+<span class="sd">        Raises whichever Exception sqlglot wants to throw on invalid sql.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">sqlglot</span><span class="o">.</span><span class="n">parse_one</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">read</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dialect</span><span class="p">)</span></div>
@@ -571,19 +571,17 @@
                     <span class="p">)</span>
                     <span class="n">converted_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv_type</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># TODO: proper error handling</span>
                     <span class="nb">print</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;unrecognized number type format &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39; for numeric() column type&quot;</span><span class="p">,</span>
                         <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
                     <span class="p">)</span>
-                    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># TODO: proper error handling</span>
                 <span class="nb">print</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;unable to convert from internal type &#39;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&#39; to declared type&quot;</span><span class="p">,</span>
                     <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span>
 
         <span class="k">return</span> <span class="n">converted_types</span>
 
@@ -616,7 +614,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f1c0fdbd150>
+    <jinja2.runtime.BlockReference object at 0x7f84813c9120>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

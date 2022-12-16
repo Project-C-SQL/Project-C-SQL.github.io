@@ -946,7 +946,7 @@ case of nested Where statements.</p>
 <dd><p>Parses all the statements in ‘sql’.</p>
 <p>‘sql’ should be a string of one or more postgresql statements
 (delimited by ‘;’). The last ‘;’ in ‘sql’ is optional.
-Throws sqlglot.ParseError on invalid sql.</p>
+Raises whichever Exception sqlglot wants to throw on invalid sql.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code>]</p>
@@ -961,7 +961,7 @@ Throws sqlglot.ParseError on invalid sql.</p>
 Does not validate that ‘sql’ contains only 1 statement!
 ‘sql’ should be a postgresql statement.
 The trailing ‘;’ in ‘sql’ is optional.
-Throws sqlglot.ParseError on invalid sql.</p>
+Raises whichever Exception sqlglot wants to throw on invalid sql.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></p>
@@ -1094,7 +1094,7 @@ otherwise None</p>
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f1c10219a80>
+    <jinja2.runtime.BlockReference object at 0x7f8481821a50>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
