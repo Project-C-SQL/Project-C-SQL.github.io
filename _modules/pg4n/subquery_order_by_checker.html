@@ -194,6 +194,8 @@
         <span class="c1">#       finds more warnings than postgresql.</span>
 
         <span class="n">has_orderby</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">Order</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qep_analysis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
         <span class="n">has_sort_node</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">qep_analysis</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">rfindval</span><span class="p">(</span><span class="s2">&quot;Node Type&quot;</span><span class="p">,</span> <span class="s2">&quot;Sort&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="n">has_inner_orderby</span> <span class="o">=</span> <span class="n">has_orderby</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_sort_node</span>
@@ -223,7 +225,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7fb6351be620>
+    <jinja2.runtime.BlockReference object at 0x7fb0213bf010>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
