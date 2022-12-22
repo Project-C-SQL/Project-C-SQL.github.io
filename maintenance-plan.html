@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#backend">Backend</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#implementing-semantic-analysis-modules">Implementing semantic analysis modules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#thoughts-on-syntax-error-analysis">Thoughts on syntax error analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changing-error-messages">Changing error messages</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#frontend">Frontend</a><ul>
@@ -208,6 +209,10 @@
 <h3>Thoughts on syntax error analysis<a class="headerlink" href="#thoughts-on-syntax-error-analysis" title="Permalink to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">PsqlWrapper</span></code> has a <code class="docutils literal notranslate"><span class="pre">hook_syntax_f</span></code> function parameter (of type <code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">-&gt;</span> <span class="pre">str</span></code>), which is called with <code class="docutils literal notranslate"><span class="pre">PsqlParser.parse_syntax_error</span></code>-produced string, ideally “ERROR: … ^”, which, to our understanding, will always include the whole result, and also the SQL query itself (as caret will point to it), so it does not have to be parsed separately. A syntax error analysis component should then return a message string, and it will be displayed in exactly the same way as semantic error strings.</p>
 </section>
+<section id="changing-error-messages">
+<h3>Changing error messages<a class="headerlink" href="#changing-error-messages" title="Permalink to this heading"></a></h3>
+<p>One can change error messages by changing the <code class="docutils literal notranslate"><span class="pre">check</span></code> member function of the class in each of the <code class="docutils literal notranslate"><span class="pre">_checker.py</span></code> files. <code class="docutils literal notranslate"><span class="pre">check()</span></code> returns either the error messaeg or <code class="docutils literal notranslate"><span class="pre">None</span></code>. One can also change the <code class="docutils literal notranslate"><span class="pre">ErrorFormatter</span></code> class to influence the output format for the error message.</p>
+</section>
 </section>
 <section id="frontend">
 <h2>Frontend<a class="headerlink" href="#frontend" title="Permalink to this heading"></a></h2>
@@ -248,7 +253,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f9d115d2f20>
+    <jinja2.runtime.BlockReference object at 0x7f30f7e07e50>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
