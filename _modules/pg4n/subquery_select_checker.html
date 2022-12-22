@@ -200,8 +200,8 @@
 
 <span class="kn">import</span> <span class="nn">sqlglot.expressions</span> <span class="k">as</span> <span class="nn">exp</span>
 
-<span class="kn">from</span> <span class="nn">.sqlparser</span> <span class="kn">import</span> <span class="n">SqlParser</span>
 <span class="kn">from</span> <span class="nn">.errfmt</span> <span class="kn">import</span> <span class="n">ErrorFormatter</span>
+<span class="kn">from</span> <span class="nn">.sqlparser</span> <span class="kn">import</span> <span class="n">SqlParser</span>
 
 <span class="n">VT100_UNDERLINE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[4m&quot;</span>
 <span class="n">VT100_RESET</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
@@ -232,7 +232,6 @@
 
         <span class="n">warning</span> <span class="o">=</span> <span class="s2">&quot;No column in subquery SELECT references its tables&quot;</span>
         <span class="n">warning_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;Checker&quot;</span><span class="p">)</span>
-
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nested_condition_context</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nested_condition_contexts</span><span class="p">):</span>
             <span class="n">whole_statement</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parsed_sql</span><span class="p">)</span>
@@ -303,7 +302,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f30f752ee90>
+    <jinja2.runtime.BlockReference object at 0x7f5e49a0fa00>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

@@ -195,11 +195,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pg4n.psqlconninfo</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pexpect</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">pyparsing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Word</span><span class="p">,</span> <span class="n">ParseException</span><span class="p">,</span> <span class="n">ParserElement</span><span class="p">,</span> \
-    <span class="n">identbodychars</span><span class="p">,</span> <span class="n">nums</span>
+<span class="kn">import</span> <span class="nn">pexpect</span>
+<span class="kn">from</span> <span class="nn">pyparsing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">ParseException</span><span class="p">,</span> <span class="n">ParserElement</span><span class="p">,</span> <span class="n">Word</span><span class="p">,</span> <span class="n">identbodychars</span><span class="p">,</span> <span class="n">nums</span>
 
 
 <div class="viewcode-block" id="PsqlConnInfo"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo">[docs]</a><span class="k">class</span> <span class="nc">PsqlConnInfo</span><span class="p">:</span>
@@ -212,49 +211,39 @@
     <span class="c1"># multiple elements into one. These are often combined to build functions</span>
     <span class="c1"># for matching.</span>
 
-    <span class="n">tok_pre_database</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;You are connected to database </span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">tok_database</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Word</span><span class="p">(</span><span class="n">identbodychars</span><span class="p">)</span>
+    <span class="n">tok_pre_database</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;You are connected to database &quot;&#39;</span><span class="p">)</span>
+    <span class="n">tok_database</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Word</span><span class="p">(</span><span class="n">identbodychars</span><span class="p">)</span>
 
-    <span class="n">tok_pre_user</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2"> as user </span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">tok_user</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Word</span><span class="p">(</span><span class="n">identbodychars</span><span class="p">)</span>
+    <span class="n">tok_pre_user</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;&quot; as user &quot;&#39;</span><span class="p">)</span>
+    <span class="n">tok_user</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Word</span><span class="p">(</span><span class="n">identbodychars</span><span class="p">)</span>
 
-    <span class="n">tok_pre_host</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2"> on host </span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">|</span> \
-        <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2"> via socket in </span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">tok_host</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Word</span><span class="p">(</span><span class="n">identbodychars</span> <span class="o">+</span> <span class="s2">&quot;/.&quot;</span><span class="p">)</span>
+    <span class="n">tok_pre_host</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;&quot; on host &quot;&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;&quot; via socket in &quot;&#39;</span><span class="p">)</span>
+    <span class="n">tok_host</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Word</span><span class="p">(</span><span class="n">identbodychars</span> <span class="o">+</span> <span class="s2">&quot;/.&quot;</span><span class="p">)</span>
 
-    <span class="n">tok_pre_port</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2"> at port </span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">tok_port</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Word</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
-    <span class="n">tok_end</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> \
-        <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="n">tok_pre_port</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;&quot; at port &quot;&#39;</span><span class="p">)</span>
+    <span class="n">tok_port</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Word</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
+    <span class="n">tok_end</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;&quot;.&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">psql_args</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psql_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Use psql child process with exact same command-line arguments \</span>
 <span class="sd">        to initialize connection info.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pg_tuple</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">match_psql_conninfo</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tok_pre_database</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_database</span> <span class="o">+</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tok_pre_user</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_user</span> <span class="o">+</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tok_pre_host</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_host</span> <span class="o">+</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tok_pre_port</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_port</span> <span class="o">+</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tok_end</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tok_pre_database</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_database</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_pre_user</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_user</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_pre_host</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_host</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_pre_port</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_port</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_end</span>
         <span class="p">)</span>
-        <span class="n">pexpect_conninfo</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="s2">&quot;psql -c </span><span class="se">\&quot;\\</span><span class="s2">conninfo</span><span class="se">\&quot;</span><span class="s2"> &quot;</span> <span class="o">+</span> <span class="n">psql_args</span><span class="p">)</span>
+        <span class="n">pexpect_conninfo</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="s1">&#39;psql -c &quot;</span><span class="se">\\</span><span class="s1">conninfo&quot; &#39;</span> <span class="o">+</span> <span class="n">psql_args</span><span class="p">)</span>
         <span class="n">pexpect_conninfo</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">pexpect</span><span class="o">.</span><span class="n">EOF</span><span class="p">)</span>
         <span class="n">conninfo_str</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">pexpect_conninfo</span><span class="o">.</span><span class="n">before</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">conninfo_res</span> <span class="o">=</span> \
-                <span class="n">match_psql_conninfo</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">conninfo_str</span><span class="p">)</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
+            <span class="n">conninfo_res</span> <span class="o">=</span> <span class="n">match_psql_conninfo</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">conninfo_str</span><span class="p">)</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">ParseException</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pg_host</span> <span class="o">=</span> <span class="n">conninfo_res</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
@@ -267,13 +256,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">pg_port</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pg_user</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pg_pass</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pg_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pg_name</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">pass</span>
 
-<div class="viewcode-block" id="PsqlConnInfo.get"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span>
-            <span class="bp">self</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<div class="viewcode-block" id="PsqlConnInfo.get"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.psqlconninfo.PsqlConnInfo.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Get 5-tuple that has the PostgreSQL host, port, user, pass, and db \</span>
 <span class="sd">        name.</span>
 
@@ -297,7 +284,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f30f745f910>
+    <jinja2.runtime.BlockReference object at 0x7f5e490acd60>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

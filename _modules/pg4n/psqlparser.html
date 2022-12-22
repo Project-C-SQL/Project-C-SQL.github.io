@@ -210,14 +210,14 @@
     <span class="n">Literal</span><span class="p">,</span>
     <span class="n">Opt</span><span class="p">,</span>
     <span class="n">ParseException</span><span class="p">,</span>
-    <span class="n">ParseResults</span><span class="p">,</span>
     <span class="n">ParserElement</span><span class="p">,</span>
+    <span class="n">ParseResults</span><span class="p">,</span>
     <span class="n">StringEnd</span><span class="p">,</span>
     <span class="n">White</span><span class="p">,</span>
     <span class="n">Word</span><span class="p">,</span>
     <span class="n">ZeroOrMore</span><span class="p">,</span>
     <span class="n">identbodychars</span><span class="p">,</span>
-    <span class="n">nums</span>
+    <span class="n">nums</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Turn on memoization optimization</span>
@@ -258,10 +258,10 @@
     <span class="c1"># %# = #, &gt;</span>
     <span class="c1"># This will match against &quot;%R%x%# &quot;, e.g &quot;=&gt; &quot;.</span>
     <span class="n">tok_rev_prompt_end</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Combine</span><span class="p">(</span>
-            <span class="n">Opt</span><span class="p">(</span><span class="n">White</span><span class="p">())</span>
-            <span class="o">+</span> <span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">))</span>
-            <span class="o">+</span> <span class="n">Opt</span><span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;!&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-            <span class="o">+</span> <span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">))</span>
+        <span class="n">Opt</span><span class="p">(</span><span class="n">White</span><span class="p">())</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">))</span>
+        <span class="o">+</span> <span class="n">Opt</span><span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;^&quot;</span><span class="p">))</span>
     <span class="p">)</span>
 
     <span class="c1"># %/%R%x%# per postgres bin/psql/settings.h</span>
@@ -273,15 +273,56 @@
     <span class="c1"># This will match against &quot;%R%x%# &quot;, e.g &quot;-&gt; &quot;.</span>
     <span class="c1"># To save time, since linebreak prompts are only removed,</span>
     <span class="c1"># just match against a list of all possible combinations</span>
-    <span class="n">multiline_prompt_ends</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> \
-        <span class="p">[</span><span class="s2">&quot;-#&quot;</span><span class="p">,</span> <span class="s2">&quot;*#&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">#&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">#&quot;</span><span class="p">,</span> <span class="s2">&quot;$#&quot;</span><span class="p">,</span> <span class="s2">&quot;(#&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;*&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;$&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;(&gt;&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;-*#&quot;</span><span class="p">,</span> <span class="s2">&quot;**#&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">*#&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">*#&quot;</span><span class="p">,</span> <span class="s2">&quot;$*#&quot;</span><span class="p">,</span> <span class="s2">&quot;(*#&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;-*&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;**&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">*&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">*&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;$*&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;(*&gt;&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;-!#&quot;</span><span class="p">,</span> <span class="s2">&quot;*!#&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">!#&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">!#&quot;</span><span class="p">,</span> <span class="s2">&quot;$!#&quot;</span><span class="p">,</span> <span class="s2">&quot;(!#&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;-!&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;*!&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">!&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">!&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;$!&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;(!&gt;&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;-?#&quot;</span><span class="p">,</span> <span class="s2">&quot;*?#&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">?#&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">?#&quot;</span><span class="p">,</span> <span class="s2">&quot;$?#&quot;</span><span class="p">,</span> <span class="s2">&quot;(?#&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;-?&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;*?&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">?&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">?&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;$?&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;(?&gt;&quot;</span><span class="p">]</span>
+    <span class="n">multiline_prompt_ends</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;-#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;*#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&#39;#&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;&quot;#&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;$#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;*&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&#39;&gt;&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;&quot;&gt;&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;$&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-*#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;**#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&#39;*#&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;&quot;*#&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;$*#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(*#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-*&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;**&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&#39;*&gt;&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;&quot;*&gt;&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;$*&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(*&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-!#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;*!#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&#39;!#&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;&quot;!#&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;$!#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(!#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-!&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;*!&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&#39;!&gt;&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;&quot;!&gt;&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;$!&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(!&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-?#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;*?#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&#39;?#&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;&quot;?#&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;$?#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(?#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-?&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;*?&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&#39;?&gt;&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;&quot;?&gt;&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;$?&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(?&gt;&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
     <span class="c1"># ParserElement for these would look this:</span>
     <span class="c1">#    tok_multiline_prompt_end: ParserElement = \</span>
     <span class="c1">#        Combine(</span>
@@ -316,8 +357,7 @@
         <span class="n">magical_return_res</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParseResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">magical_return_res</span> <span class="o">=</span> \
-                <span class="n">match_rev_magical_returns</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql_rev</span><span class="p">)</span>
+            <span class="n">magical_return_res</span> <span class="o">=</span> <span class="n">match_rev_magical_returns</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">psql_rev</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">ParseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;psqlparser.log&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
@@ -369,14 +409,15 @@
         <span class="n">prompt_res</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParseResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">match_rev_prompt_and_then_rest</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tok_rev_prompt_end</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">tok_rev_prompt_end</span>
             <span class="o">+</span> <span class="n">Word</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_chars</span><span class="p">)</span>
-            <span class="o">+</span> <span class="p">(</span><span class="n">StringEnd</span><span class="p">()</span>         <span class="c1"># output may stop at end of db name,</span>
-               <span class="o">|</span> <span class="p">(</span>  <span class="c1"># or continue \x1b[?.. </span>
-                   <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;?[</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># in this case control code parameter</span>
-                   <span class="o">+</span> <span class="o">...</span>              <span class="c1"># has already been parsed as prompt_chars</span>
-                   <span class="o">+</span> <span class="n">StringEnd</span><span class="p">()</span>
-               <span class="p">)</span>
+            <span class="o">+</span> <span class="p">(</span>
+                <span class="n">StringEnd</span><span class="p">()</span>  <span class="c1"># output may stop at end of db name,</span>
+                <span class="o">|</span> <span class="p">(</span>  <span class="c1"># or continue \x1b[?..</span>
+                    <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;?[</span><span class="se">\x1b</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># in this case control code parameter</span>
+                    <span class="o">+</span> <span class="o">...</span>  <span class="c1"># has already been parsed as prompt_chars</span>
+                    <span class="o">+</span> <span class="n">StringEnd</span><span class="p">()</span>
+                <span class="p">)</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
@@ -392,14 +433,11 @@
         <span class="k">if</span> <span class="n">prompt_res</span><span class="p">:</span>
             <span class="n">res_list</span> <span class="o">=</span> <span class="n">prompt_res</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># parsing stops right after database name</span>
-                <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                    <span class="n">res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="p">]</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
             <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># results include \x1b[?2004h..</span>
                 <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="n">res_list</span><span class="p">[</span><span class="mi">3</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="n">res_list</span><span class="p">[</span><span class="mi">2</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">res_list</span><span class="p">[</span><span class="mi">2</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
                 <span class="p">]</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
@@ -417,13 +455,10 @@
         <span class="c1"># Match statement that might have \r\n or whitespace at the end.</span>
         <span class="c1"># Parse prompt text at the end, so multiline queries can be cleaned</span>
         <span class="c1"># properly.</span>
-        <span class="n">tok_stmt_end</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Char</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+        <span class="n">tok_stmt_end</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Char</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
 
         <span class="n">match_rev_any_sql_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">ZeroOrMore</span><span class="p">(</span><span class="n">White</span><span class="p">())</span>
-            <span class="o">+</span> <span class="n">tok_stmt_end</span>
-            <span class="o">+</span> <span class="o">...</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_rev_prompt_end</span>
+            <span class="n">ZeroOrMore</span><span class="p">(</span><span class="n">White</span><span class="p">())</span> <span class="o">+</span> <span class="n">tok_stmt_end</span> <span class="o">+</span> <span class="o">...</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_rev_prompt_end</span>
         <span class="p">)</span>
 
         <span class="n">match_rev_last_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="p">(</span>
@@ -449,16 +484,11 @@
             <span class="n">stmt_res_list</span> <span class="o">=</span> <span class="n">stmt_res</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
             <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stmt_res_list</span><span class="p">)</span>
 
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">3</span><span class="p">],</span>
-                <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">4</span><span class="p">]</span>
-            <span class="p">]</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">3</span><span class="p">],</span> <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">4</span><span class="p">]]</span>
             <span class="n">db_name</span> <span class="o">=</span> <span class="n">stmt_res_list</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># reverse back, concatenate, and remove \n&#39;s</span>
-        <span class="n">unreversed_flattened_res</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">results</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
-        <span class="p">)</span>
+        <span class="n">unreversed_flattened_res</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">results</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
         <span class="c1"># Replacing \n&#39;s has some edge cases where wrapper transparency</span>
         <span class="c1"># breaks, because both of these work right in straight psql. See:</span>
@@ -470,17 +500,15 @@
         <span class="c1"># should convert \n -&gt; &quot; &quot; to avoid &quot;SELECT* FROM ..&quot;.</span>
         <span class="c1">#</span>
         <span class="c1"># Replacing \n&#39;s with &quot; &quot; seems to have less edge cases.</span>
-        <span class="n">no_newlines_res</span> <span class="o">=</span> <span class="n">unreversed_flattened_res</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">no_newlines_res</span> <span class="o">=</span> <span class="n">unreversed_flattened_res</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
 
         <span class="c1"># Is the statement a SELECT statement?</span>
-        <span class="n">match_select_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">ZeroOrMore</span><span class="p">(</span><span class="n">White</span><span class="p">())</span>
-            <span class="o">+</span> <span class="n">CaselessLiteral</span><span class="p">(</span><span class="s2">&quot;SELECT&quot;</span><span class="p">)</span>
+        <span class="n">match_select_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">ZeroOrMore</span><span class="p">(</span><span class="n">White</span><span class="p">())</span> <span class="o">+</span> <span class="n">CaselessLiteral</span><span class="p">(</span>
+            <span class="s2">&quot;SELECT&quot;</span>
         <span class="p">)</span>
         <span class="n">is_select</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">is_select</span> <span class="o">=</span> \
-                <span class="n">match_select_stmt</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">no_newlines_res</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="p">[]</span>
+            <span class="n">is_select</span> <span class="o">=</span> <span class="n">match_select_stmt</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="n">no_newlines_res</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="p">[]</span>
         <span class="k">except</span> <span class="n">ParseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;psqlparser.log&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
@@ -504,13 +532,8 @@
 <span class="sd">        :param psql: psql --version output</span>
 <span class="sd">        :returns: version string (e.g &quot;14.5&quot;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">match_version_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;psql (PostgreSQL) &quot;</span><span class="p">)</span>
-            <span class="o">+</span> <span class="n">Combine</span><span class="p">(</span>
-                <span class="n">Word</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
-                <span class="o">+</span> <span class="s1">&#39;.&#39;</span>
-                <span class="o">+</span> <span class="n">Word</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
-            <span class="p">)</span>
+        <span class="n">match_version_stmt</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;psql (PostgreSQL) &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Combine</span><span class="p">(</span>
+            <span class="n">Word</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">Word</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">stmt_res</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParseResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">result</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -539,10 +562,7 @@
         <span class="n">tok_marker_caret</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;^&quot;</span><span class="p">)</span>
         <span class="n">tok_rev_error</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">(</span><span class="s2">&quot;:RORRE&quot;</span><span class="p">)</span>
         <span class="n">match_error_statement</span><span class="p">:</span> <span class="n">ParserElement</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="o">...</span>
-            <span class="o">+</span> <span class="n">tok_marker_caret</span>
-            <span class="o">+</span> <span class="o">...</span>
-            <span class="o">+</span> <span class="n">tok_rev_error</span>
+            <span class="o">...</span> <span class="o">+</span> <span class="n">tok_marker_caret</span> <span class="o">+</span> <span class="o">...</span> <span class="o">+</span> <span class="n">tok_rev_error</span>
         <span class="p">)</span>
 
         <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -558,11 +578,8 @@
 
         <span class="k">if</span> <span class="n">stmt_res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">stmt_res_list</span> <span class="o">=</span> <span class="n">stmt_res</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt_res_list</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
-                       <span class="n">stmt_res_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                       <span class="n">stmt_res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-        <span class="n">unreversed_flattened_res</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> \
-            <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">results</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt_res_list</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">stmt_res_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">stmt_res_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">unreversed_flattened_res</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">results</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">unreversed_flattened_res</span></div></div>
 </pre></div>
@@ -581,7 +598,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f30f80195d0>
+    <jinja2.runtime.BlockReference object at 0x7f5e49bf0e80>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">

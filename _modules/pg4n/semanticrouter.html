@@ -198,19 +198,19 @@
 <span></span><span class="c1"># Written by Tatu Heikkilä, tatu.heikkila@tuni.fi</span>
 <span class="c1"># Licensed under MIT.</span>
 <span class="sd">&quot;&quot;&quot;Handle semantic analysis modules.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+
 <span class="kn">import</span> <span class="nn">psycopg</span>
 <span class="kn">from</span> <span class="nn">sqlglot</span> <span class="kn">import</span> <span class="n">exp</span>
 
-<span class="kn">from</span> <span class="nn">.config_values</span> <span class="kn">import</span> <span class="n">ConfigValues</span>
-<span class="kn">from</span> <span class="nn">.sqlparser</span> <span class="kn">import</span> <span class="n">SqlParser</span><span class="p">,</span> <span class="n">Column</span>
-<span class="kn">from</span> <span class="nn">.qepparser</span> <span class="kn">import</span> <span class="n">QEPAnalysis</span><span class="p">,</span> <span class="n">QEPParser</span>
-
 <span class="c1"># analysis modules</span>
 <span class="kn">from</span> <span class="nn">.cmp_domain_checker</span> <span class="kn">import</span> <span class="n">CmpDomainChecker</span>
+<span class="kn">from</span> <span class="nn">.config_values</span> <span class="kn">import</span> <span class="n">ConfigValues</span>
 <span class="kn">from</span> <span class="nn">.eq_wildcard_checker</span> <span class="kn">import</span> <span class="n">EqWildcardChecker</span>
 <span class="kn">from</span> <span class="nn">.implied_expression_checker</span> <span class="kn">import</span> <span class="n">ImpliedExpressionChecker</span>
 <span class="kn">from</span> <span class="nn">.inconsistent_expression_checker</span> <span class="kn">import</span> <span class="n">InconsistentExpressionChecker</span>
+<span class="kn">from</span> <span class="nn">.qepparser</span> <span class="kn">import</span> <span class="n">QEPAnalysis</span><span class="p">,</span> <span class="n">QEPParser</span>
+<span class="kn">from</span> <span class="nn">.sqlparser</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">SqlParser</span>
 <span class="kn">from</span> <span class="nn">.strange_having_checker</span> <span class="kn">import</span> <span class="n">StrangeHavingChecker</span>
 <span class="kn">from</span> <span class="nn">.subquery_order_by_checker</span> <span class="kn">import</span> <span class="n">SubqueryOrderByChecker</span>
 <span class="kn">from</span> <span class="nn">.subquery_select_checker</span> <span class="kn">import</span> <span class="n">SubquerySelectChecker</span>
@@ -227,7 +227,7 @@
         <span class="n">pg_user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">pg_pass</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">pg_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">config_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConfigValues</span><span class="p">]</span>
+        <span class="n">config_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConfigValues</span><span class="p">],</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize Postgres connection with given paramaters.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pg_host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pg_host</span>
@@ -237,10 +237,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pg_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pg_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConfigValues</span><span class="p">]</span> <span class="o">=</span> <span class="n">config_values</span>
 
-<div class="viewcode-block" id="SemanticRouter.run_analysis"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.semanticrouter.SemanticRouter.run_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">run_analysis</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="SemanticRouter.run_analysis"><a class="viewcode-back" href="../../api/pg4n.html#pg4n.semanticrouter.SemanticRouter.run_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">run_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Run analysis modules on SQL query string and get an insightful \</span>
 <span class="sd">        message in return.</span>
 
@@ -253,23 +250,23 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">psycopg</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-                <span class="s2">&quot;host=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_host</span> <span class="o">+</span>
-                <span class="s2">&quot; port=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_port</span> <span class="o">+</span>
-                <span class="s2">&quot; dbname=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_name</span> <span class="o">+</span>
-                <span class="s2">&quot; user=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_user</span> <span class="o">+</span>
-                <span class="s2">&quot; password=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_pass</span>
+                <span class="s2">&quot;host=&quot;</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_host</span>
+                <span class="o">+</span> <span class="s2">&quot; port=&quot;</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_port</span>
+                <span class="o">+</span> <span class="s2">&quot; dbname=&quot;</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_name</span>
+                <span class="o">+</span> <span class="s2">&quot; user=&quot;</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_user</span>
+                <span class="o">+</span> <span class="s2">&quot; password=&quot;</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pg_pass</span>
             <span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-                <span class="n">sql_parser</span><span class="p">:</span> <span class="n">SqlParser</span> <span class="o">=</span> \
-                    <span class="n">SqlParser</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
-                <span class="n">sanitized_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span> <span class="o">=</span> \
-                    <span class="n">sql_parser</span><span class="o">.</span><span class="n">parse_one</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
-                <span class="n">qep_analysis</span><span class="p">:</span> <span class="n">QEPAnalysis</span> <span class="o">=</span> \
-                    <span class="n">QEPParser</span><span class="p">(</span><span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
-                <span class="n">analysis_result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> \
-                    <span class="kc">None</span>
+                <span class="n">sql_parser</span><span class="p">:</span> <span class="n">SqlParser</span> <span class="o">=</span> <span class="n">SqlParser</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+                <span class="n">sanitized_sql</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">Expression</span> <span class="o">=</span> <span class="n">sql_parser</span><span class="o">.</span><span class="n">parse_one</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
+                <span class="n">qep_analysis</span><span class="p">:</span> <span class="n">QEPAnalysis</span> <span class="o">=</span> <span class="n">QEPParser</span><span class="p">(</span><span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sql_query</span><span class="p">)</span>
+                <span class="n">analysis_result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-                <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Column</span><span class="p">]</span> <span class="o">=</span> \
-                    <span class="n">sql_parser</span><span class="o">.</span><span class="n">get_query_columns</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">)</span>
+                <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Column</span><span class="p">]</span> <span class="o">=</span> <span class="n">sql_parser</span><span class="o">.</span><span class="n">get_query_columns</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">)</span>
 
                 <span class="k">def</span> <span class="nf">is_disabled_in_config</span><span class="p">(</span><span class="n">checker_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -279,10 +276,7 @@
 
                 <span class="c1"># Comparing different domains</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_disabled_in_config</span><span class="p">(</span><span class="n">CmpDomainChecker</span><span class="p">):</span>
-                    <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">CmpDomainChecker</span><span class="p">(</span>
-                        <span class="n">sanitized_sql</span><span class="p">,</span>
-                        <span class="n">columns</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+                    <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">CmpDomainChecker</span><span class="p">(</span><span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
                     <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">analysis_result</span>
@@ -290,8 +284,7 @@
                 <span class="c1"># ORDER BY in subquery</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_disabled_in_config</span><span class="p">(</span><span class="n">SubqueryOrderByChecker</span><span class="p">):</span>
                     <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">SubqueryOrderByChecker</span><span class="p">(</span>
-                        <span class="n">sanitized_sql</span><span class="p">,</span>
-                        <span class="n">qep_analysis</span>
+                        <span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
                     <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -300,8 +293,7 @@
                 <span class="c1"># SELECT in subquery</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_disabled_in_config</span><span class="p">(</span><span class="n">SubquerySelectChecker</span><span class="p">):</span>
                     <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">SubquerySelectChecker</span><span class="p">(</span>
-                        <span class="n">sanitized_sql</span><span class="p">,</span>
-                        <span class="n">sql_parser</span>
+                        <span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">sql_parser</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
                     <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -310,9 +302,7 @@
                 <span class="c1"># Implied expression</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_disabled_in_config</span><span class="p">(</span><span class="n">ImpliedExpressionChecker</span><span class="p">):</span>
                     <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">ImpliedExpressionChecker</span><span class="p">(</span>
-                        <span class="n">sanitized_sql</span><span class="p">,</span>
-                        <span class="n">sql_query</span><span class="p">,</span>
-                        <span class="n">conn</span>
+                        <span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">,</span> <span class="n">conn</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
                     <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -321,8 +311,7 @@
                 <span class="c1"># Strange HAVING clause without GROUP BY</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_disabled_in_config</span><span class="p">(</span><span class="n">StrangeHavingChecker</span><span class="p">):</span>
                     <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">StrangeHavingChecker</span><span class="p">(</span>
-                        <span class="n">sanitized_sql</span><span class="p">,</span>
-                        <span class="n">qep_analysis</span>
+                        <span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
                 <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -331,8 +320,7 @@
                 <span class="c1"># SUM/AVG(DISTINCT)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_disabled_in_config</span><span class="p">(</span><span class="n">SumDistinctChecker</span><span class="p">):</span>
                     <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">SumDistinctChecker</span><span class="p">(</span>
-                        <span class="n">sanitized_sql</span><span class="p">,</span>
-                        <span class="n">qep_analysis</span>
+                        <span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
                     <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -341,8 +329,7 @@
                 <span class="c1"># Wildcards without LIKE</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_disabled_in_config</span><span class="p">(</span><span class="n">EqWildcardChecker</span><span class="p">):</span>
                     <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">EqWildcardChecker</span><span class="p">(</span>
-                        <span class="n">sanitized_sql</span><span class="p">,</span>
-                        <span class="n">qep_analysis</span>
+                        <span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
                     <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -351,8 +338,7 @@
                 <span class="c1"># Inconsistent expression</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_disabled_in_config</span><span class="p">(</span><span class="n">InconsistentExpressionChecker</span><span class="p">):</span>
                     <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">InconsistentExpressionChecker</span><span class="p">(</span>
-                        <span class="n">sanitized_sql</span><span class="p">,</span>
-                        <span class="n">qep_analysis</span>
+                        <span class="n">sanitized_sql</span><span class="p">,</span> <span class="n">qep_analysis</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
                     <span class="k">if</span> <span class="n">analysis_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -379,7 +365,7 @@
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     provided by <a href="https://readthedocs.org">Read the Docs</a>.
   
-    <jinja2.runtime.BlockReference object at 0x7f30f7facb50>
+    <jinja2.runtime.BlockReference object at 0x7f5e49a72320>
     <div class="footer" style="float:right">
         <a href="https://github.com/Project-C-SQL/postgresql-for-novices">
           <img src="../../_static/github-mark.svg" loading="lazy" decoding="async" alt="GitHub mark" width="20" height="20">
